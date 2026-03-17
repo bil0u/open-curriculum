@@ -1,0 +1,12 @@
+dist
+node_modules
+bun.lock
+playwright-report
+test-results
+coverage
+# Pre-existing documentation — do not reformat
+docs
+.claude
+CLAUDE.md
+README.md
+TODO.md

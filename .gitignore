@@ -24,6 +24,9 @@ Thumbs.db
 # Bun
 bun.lock
 
+# TypeScript
+*.tsbuildinfo
+
 # Vitest
 coverage/
 
@@ -36,3 +39,5 @@ playwright-report/
 
 # Project-specific
 TODO.md
+.claude/
+CLAUDE.md
