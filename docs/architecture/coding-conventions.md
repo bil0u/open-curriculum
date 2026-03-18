@@ -87,9 +87,9 @@ interface Profile {
 interface Section {
   id: string;
   type: SectionType;
-  label: LocalizedString;
-  items: SectionItem[];
-  order: number;
+  title: Translatable;
+  visible: boolean;
+  // Order is determined by array position in CvDocument.sections
 }
 
 // Type aliases for unions and utility types
