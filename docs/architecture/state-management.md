@@ -1,58 +1,162 @@
 # State Management
 
-Four Zustand stores, each with a single responsibility. Stores are independent -- no store imports another store. Cross-store coordination happens in React components or hooks that subscribe to multiple stores.
+Two Zustand stores for MVP, each with a single responsibility. Stores are independent -- no store imports another store. Cross-store coordination happens in React components or hooks that subscribe to multiple stores.
+
+Additional stores (`useThemeStore`, `useSettingsStore`) will be introduced when their respective features are built (theme engine, settings UI).
 
 ---
 
 ## `useCvStore`
 
-Owns the active CV document: profile data, sections, section items, and the active locale for editing.
+Owns the active CV document. The store holds the `CvDocument` directly -- no denormalization, no merge/unmerge on load/save. The resolved profile (shared profile + per-CV overrides) is computed outside the store via a `useResolvedProfile()` hook.
 
 ```typescript
 interface CvState {
-  activeCvId: string | null;
-  profile: Profile;
-  sections: Section[];
-  activeLocale: string;
+  activeCvId: EntityId | null;
+  document: CvDocument | null;
+  activeLocale: Locale;
 }
 
 interface CvActions {
-  loadCv: (id: string) => Promise<void>;
-  updateProfile: (field: keyof Profile, value: LocalizedString) => void;
+  loadCv: (id: EntityId) => Promise<void>;
+  createCv: (options: CreateCvOptions) => Promise<EntityId>;
+  updateDocument: (updates: Partial<CvDocument>) => void;
+  updateProfileOverride: (field: string, value: unknown) => void;
+  clearProfileOverride: (field: string) => void;
   addSection: (type: SectionType) => void;
-  removeSection: (sectionId: string) => void;
+  removeSection: (sectionId: EntityId) => void;
   reorderSections: (fromIndex: number, toIndex: number) => void;
-  updateSectionItem: (sectionId: string, itemId: string, data: Partial<SectionItem>) => void;
-  addSectionItem: (sectionId: string, item: SectionItem) => void;
-  removeSectionItem: (sectionId: string, itemId: string) => void;
-  reorderSectionItems: (sectionId: string, fromIndex: number, toIndex: number) => void;
-  setActiveLocale: (locale: string) => void;
+  updateSection: (sectionId: EntityId, updates: Partial<SectionBase>) => void;
+  addSectionItem: (sectionId: EntityId, item: unknown) => void;
+  removeSectionItem: (sectionId: EntityId, itemId: EntityId) => void;
+  updateSectionItem: (sectionId: EntityId, itemId: EntityId, data: Record<string, unknown>) => void;
+  reorderSectionItems: (sectionId: EntityId, fromIndex: number, toIndex: number) => void;
+  setActiveLocale: (locale: Locale) => void;
 }
+```
+
+### Middleware Stack (MVP)
+
+```typescript
+import { create } from 'zustand';
+import { temporal } from 'zundo';
+import { subscribeWithSelector } from 'zustand/middleware';
 
 export const useCvStore = create<CvState & CvActions>()(
-  commandMiddleware(
+  subscribeWithSelector(
     temporal(
-      persist(
-        (set, get) => ({
-          // ... implementation
+      (set, get) => ({
+        // ... store definition
+      }),
+      {
+        limit: 100,
+        equality: (a, b) => a.document === b.document,
+        partialize: (state) => ({
+          document: state.document,
+          // activeLocale excluded: locale switching is navigation, not editing
+          // activeCvId excluded: switching CVs clears history
         }),
-        { name: 'cv-store' }
-      )
+      }
     )
   )
 );
+```
+
+Key design decisions:
+- **No `persist` middleware**: Zustand's `persist` is designed for localStorage. We use subscription-based auto-save to Dexie instead.
+- **No command middleware for MVP**: Undo/redo is handled entirely by Zundo. The command middleware (for action history logging) will be added in V1.1 when building the snapshot/history UI.
+- **`subscribeWithSelector`**: Enables selective subscriptions for auto-save (only trigger when `document` changes).
+- **`partialize` excludes navigation state**: Only `document` is tracked by Zundo. `activeCvId` and `activeLocale` are navigation concerns; undoing should not switch CVs or locales.
+
+### Resolved Profile (External Hook)
+
+The shared `Profile` is a separate entity in Dexie, referenced by `CvDocument.profileId`. The merged profile (shared + overrides) is not stored in the Zustand store. Instead, it is computed reactively:
+
+```typescript
+// React hook — for components that need the merged profile
+function useResolvedProfile(): Profile | null {
+  const profileId = useCvStore((s) => s.document?.profileId ?? null);
+  const overrides = useCvStore((s) => s.document?.profileOverrides ?? {});
+
+  const sharedProfile = useLiveQuery(
+    () => (profileId ? db.profiles.get(profileId) : undefined),
+    [profileId]
+  );
+
+  return useMemo(
+    () => (sharedProfile ? mergeProfile(sharedProfile, overrides) : null),
+    [sharedProfile, overrides]
+  );
+}
+
+// Imperative function — for the rendering pipeline (LiquidJS)
+async function getResolvedProfile(doc: CvDocument): Promise<Profile | null> {
+  if (!doc.profileId) return null;
+  const shared = await db.profiles.get(doc.profileId);
+  if (!shared) return null;
+  return mergeProfile(shared, doc.profileOverrides);
+}
+```
+
+### Deep Immutable Updates
+
+Updating deeply nested fields (e.g., `document.sections[2].items[1].role.en`) requires multiple levels of spread. Helper functions keep store actions clean:
+
+```typescript
+function updateDocSection(
+  doc: CvDocument,
+  sectionId: EntityId,
+  updater: (section: Section) => Section
+): CvDocument {
+  return {
+    ...doc,
+    sections: doc.sections.map((s) => (s.id === sectionId ? updater(s) : s)),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function updateDocSectionItem(
+  doc: CvDocument,
+  sectionId: EntityId,
+  itemId: EntityId,
+  updater: (item: Record<string, unknown>) => Record<string, unknown>
+): CvDocument {
+  return updateDocSection(doc, sectionId, (section) => {
+    if (!('items' in section)) return section;
+    return {
+      ...section,
+      items: section.items.map((item: { id: EntityId }) =>
+        item.id === itemId ? updater(item) : item
+      ),
+    };
+  });
+}
+```
+
+### CV Switching
+
+When switching CVs or creating a new one, the Zundo undo history must be cleared:
+
+```typescript
+function switchActiveCv(newCvId: EntityId, newDoc: CvDocument, locale: Locale) {
+  useCvStore.temporal.getState().clear();
+  useCvStore.setState({
+    activeCvId: newCvId,
+    document: newDoc,
+    activeLocale: locale,
+  });
+}
 ```
 
 ---
 
 ## `useUiStore`
 
-Transient UI state. Not persisted to Dexie -- cheap to lose on reload.
+Transient UI state. Not persisted to Dexie -- cheap to lose on reload. `panelPosition` is excluded here; it is a persistent setting that lives in `AppSettings` (Dexie).
 
 ```typescript
 interface UiState {
-  selectedSectionId: string | null;
-  editorPanelPosition: 'left' | 'right';
+  selectedSectionId: EntityId | null;
   previewZoom: number;          // 0.5 to 2.0
   activePanel: 'editor' | 'theme' | 'versions';
   isExportDialogOpen: boolean;
@@ -60,187 +164,66 @@ interface UiState {
 }
 
 interface UiActions {
-  selectSection: (id: string | null) => void;
+  selectSection: (id: EntityId | null) => void;
   setPreviewZoom: (zoom: number) => void;
   setActivePanel: (panel: UiState['activePanel']) => void;
   toggleExportDialog: () => void;
   toggleSettingsDialog: () => void;
 }
-```
 
----
-
-## `useThemeStore`
-
-Active theme identity and user overrides. Overrides are CSS custom property values.
-
-```typescript
-interface ThemeState {
-  activeThemeId: string;
-  activeVariant: string;
-  overrides: Record<string, string>;  // e.g. { '--cv-primary-color': '#2563eb' }
-  pageFormat: PageFormat;             // { width: '210mm', height: '297mm', name: 'A4' }
-}
-
-interface ThemeActions {
-  setTheme: (themeId: string) => void;
-  setVariant: (variantId: string) => void;
-  setOverride: (property: string, value: string) => void;
-  resetOverrides: () => void;
-  setPageFormat: (format: PageFormat) => void;
-}
-```
-
----
-
-## `useSettingsStore`
-
-Persistent app-wide preferences. Persisted to Dexie on change.
-
-```typescript
-interface SettingsState {
-  appLocale: string;            // App UI language (not CV content language)
-  colorScheme: 'light' | 'dark' | 'system';
-  maxSnapshots: number;         // Pruning threshold
-  autoSaveDelayMs: number;      // Debounce interval for auto-save
-}
-
-interface SettingsActions {
-  setAppLocale: (locale: string) => void;
-  setColorScheme: (scheme: SettingsState['colorScheme']) => void;
-  setMaxSnapshots: (n: number) => void;
-}
-```
-
----
-
-## Command Pattern Middleware
-
-A Zustand middleware that intercepts mutations and wraps them as named commands. This is the integration point between user actions, undo/redo, and the action history log.
-
-```typescript
-import type { StateCreator, StoreMutatorIdentifier } from 'zustand';
-
-type CommandMiddleware = <
-  T,
-  Mps extends [StoreMutatorIdentifier, unknown][] = [],
-  Mcs extends [StoreMutatorIdentifier, unknown][] = [],
->(
-  creator: StateCreator<T, Mps, Mcs>
-) => StateCreator<T, Mps, Mcs>;
-
-const commandMiddleware: CommandMiddleware = (creator) => (set, get, api) => {
-  const wrappedSet: typeof set = (partial, replace) => {
-    // 1. Capture state before mutation
-    const prev = get();
-
-    // 2. Apply mutation
-    set(partial, replace);
-
-    // 3. Read active command context (set by the action that triggered this)
-    const ctx = getActiveCommandContext();
-    if (ctx) {
-      commandRegistry.record({
-        type: ctx.type,
-        description: ctx.description,
-        timestamp: Date.now(),
-        before: prev,
-        after: get(),
-      });
-    }
-  };
-
-  return creator(wrappedSet, get, api);
-};
-```
-
-Actions set command context before mutating:
-
-```typescript
-const updateProfile: CvActions['updateProfile'] = (field, value) => {
-  withCommand(
-    { type: 'UPDATE_PROFILE', description: `Updated ${field}` },
-    () => {
-      set((state) => ({
-        profile: { ...state.profile, [field]: value },
-      }));
-    }
-  );
-};
-```
-
----
-
-## Zundo Integration (Undo/Redo)
-
-Zundo's `temporal` middleware wraps the store to maintain a history of state snapshots. It works alongside the command middleware.
-
-```typescript
-import { temporal } from 'zundo';
-
-export const useCvStore = create<CvState & CvActions>()(
-  commandMiddleware(
-    temporal(
-      (set, get) => ({
-        // ... store definition
-      }),
-      {
-        // Zundo options
-        limit: 100,                    // Max undo steps in memory
-        equality: (a, b) => deepEqual(a, b), // Skip no-op changes
-        partialize: (state) => {
-          // Only track data fields, not derived/transient state
-          const { activeCvId, profile, sections, activeLocale } = state;
-          return { activeCvId, profile, sections, activeLocale };
-        },
-      }
-    )
-  )
+export const useUiStore = create<UiState & UiActions>()(
+  (set) => ({
+    selectedSectionId: null,
+    previewZoom: 1.0,
+    activePanel: 'editor',
+    isExportDialogOpen: false,
+    isSettingsDialogOpen: false,
+    selectSection: (id) => set({ selectedSectionId: id }),
+    setPreviewZoom: (zoom) => set({ previewZoom: zoom }),
+    setActivePanel: (panel) => set({ activePanel: panel }),
+    toggleExportDialog: () => set((s) => ({ isExportDialogOpen: !s.isExportDialogOpen })),
+    toggleSettingsDialog: () => set((s) => ({ isSettingsDialogOpen: !s.isSettingsDialogOpen })),
+  })
 );
-
-// Expose undo/redo from the temporal store
-export const useUndoRedo = () => {
-  const { undo, redo, pastStates, futureStates } = useCvStore.temporal.getState();
-  return {
-    undo,
-    redo,
-    canUndo: pastStates.length > 0,
-    canRedo: futureStates.length > 0,
-  };
-};
 ```
+
+---
+
+## Deferred Stores
+
+### `useThemeStore` (theme engine step)
+
+Will hold the *resolved* theme definition (CSS, templates, layout) for the active CV's theme. Theme identity (`themeId`, `selectedLayoutId`) lives on `CvDocument`. The theme store caches the loaded/resolved theme definition for rendering.
+
+### `useSettingsStore` (settings UI step)
+
+Will wrap `AppSettings` from Dexie. Until then, a simple `getSettings()` / `updateSettings()` pair of async functions is sufficient.
 
 ---
 
 ## Dexie Persistence (Auto-Save)
 
-A subscription-based approach. The store notifies Dexie after state changes, debounced for performance. This is **not** a Zustand middleware -- it is a side-effect subscription initialized at app startup.
+A subscription-based approach using `subscribeWithSelector`. The store notifies Dexie after state changes, debounced for performance. This is **not** a Zustand middleware -- it is a side-effect subscription initialized at app startup.
 
 ```typescript
 import { db } from '@/lib/db/database';
 import { debounce } from '@/lib/utils/debounce';
 
-const AUTO_SAVE_DELAY = 2000; // ms
-
-export function initAutoSave(): () => void {
+export function initAutoSave(delayMs: number): () => void {
   const saveToDb = debounce(async (state: CvState) => {
-    if (!state.activeCvId) return;
-    await db.workingState.put({
+    if (!state.activeCvId || !state.document) return;
+    await db.workingStates.put({
       cvId: state.activeCvId,
-      data: {
-        profile: state.profile,
-        sections: state.sections,
-        activeLocale: state.activeLocale,
-      },
-      savedAt: Date.now(),
+      state: state.document,
+      lastModified: new Date().toISOString(),
     });
-  }, AUTO_SAVE_DELAY);
+  }, delayMs);
 
-  // Subscribe to store changes
+  // Subscribe to document changes only
   const unsubscribe = useCvStore.subscribe(
-    (state) => ({ profile: state.profile, sections: state.sections }),
-    (slice) => saveToDb(useCvStore.getState()),
-    { equalityFn: shallow }
+    (state) => state.document,
+    () => saveToDb(useCvStore.getState()),
+    { equalityFn: Object.is }
   );
 
   // Also save on tab close / visibility change
@@ -257,3 +240,42 @@ export function initAutoSave(): () => void {
   };
 }
 ```
+
+Key points:
+- Auto-save writes the `CvDocument` directly to `WorkingState` -- no transformation needed.
+- `delayMs` is configurable via `AppSettings.autoSaveDelayMs`.
+- Uses `Object.is` (reference equality) since every `set()` call produces a new `document` reference.
+
+---
+
+## Zundo Integration (Undo/Redo)
+
+Zundo's `temporal` middleware wraps the store to maintain a history of state snapshots in memory.
+
+```typescript
+// Expose undo/redo from the temporal store
+export const useUndoRedo = () => {
+  const { undo, redo, pastStates, futureStates } = useCvStore.temporal.getState();
+  return {
+    undo,
+    redo,
+    canUndo: pastStates.length > 0,
+    canRedo: futureStates.length > 0,
+  };
+};
+```
+
+Zundo handles undo/redo exclusively for MVP. The command middleware and command registry (for human-readable action history and snapshot descriptions) will be added in V1.1. See `command-pattern.md` for the deferred design.
+
+---
+
+## Boot Sequence
+
+App initialization flow at startup:
+
+1. Open Dexie database (triggers migrations if needed).
+2. Read `AppSettings` from Dexie (or use defaults if none).
+3. Initialize i18n with `settings.locale`.
+4. Determine which CV to load (last opened, or none).
+5. If a CV exists, call `loadCv(id)`.
+6. Start auto-save subscription with `settings.autoSaveDelayMs`.

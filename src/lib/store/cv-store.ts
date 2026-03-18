@@ -1,0 +1,289 @@
+import { temporal } from "zundo";
+import { create, useStore } from "zustand";
+import { subscribeWithSelector } from "zustand/middleware";
+
+import { db } from "@/lib/db";
+import type {
+  CvDocument,
+  EntityId,
+  Locale,
+  Section,
+  SectionType,
+} from "@/lib/types";
+import { generateId, generateISODateTime } from "@/lib/utils";
+
+import { arrayMove, updateDocSection, updateDocSectionItem } from "./helpers";
+
+export interface CvState {
+  activeCvId: EntityId | null;
+  document: CvDocument | null;
+  activeLocale: Locale;
+}
+
+export interface CreateCvOptions {
+  name: string;
+  profileId?: EntityId;
+  themeId: EntityId;
+  defaultLocale: Locale;
+}
+
+export interface CvActions {
+  loadCv: (id: EntityId) => Promise<void>;
+  createCv: (options: CreateCvOptions) => Promise<EntityId>;
+  updateDocument: (updates: Partial<CvDocument>) => void;
+  updateProfileOverride: (field: string, value: unknown) => void;
+  clearProfileOverride: (field: string) => void;
+  addSection: (type: SectionType) => void;
+  removeSection: (sectionId: EntityId) => void;
+  reorderSections: (fromIndex: number, toIndex: number) => void;
+  updateSection: (sectionId: EntityId, updates: Partial<Section>) => void;
+  addSectionItem: (
+    sectionId: EntityId,
+    item: { id: EntityId } & Record<string, unknown>,
+  ) => void;
+  removeSectionItem: (sectionId: EntityId, itemId: EntityId) => void;
+  updateSectionItem: (
+    sectionId: EntityId,
+    itemId: EntityId,
+    data: Record<string, unknown>,
+  ) => void;
+  reorderSectionItems: (
+    sectionId: EntityId,
+    fromIndex: number,
+    toIndex: number,
+  ) => void;
+  setActiveLocale: (locale: Locale) => void;
+}
+
+function withTimestamp(
+  doc: CvDocument,
+  updates: Partial<CvDocument>,
+): CvDocument {
+  return { ...doc, ...updates, updatedAt: generateISODateTime() };
+}
+
+export const useCvStore = create<CvState & CvActions>()(
+  subscribeWithSelector(
+    temporal(
+      (set, get) => ({
+        activeCvId: null,
+        document: null,
+        activeLocale: "en",
+
+        loadCv: async (id) => {
+          const working = await db.workingStates.get(id);
+          const doc = working?.state ?? (await db.cvs.get(id));
+          if (!doc) throw new Error(`CV not found: ${id}`);
+
+          useCvStore.temporal.getState().clear();
+          set({
+            activeCvId: id,
+            document: doc,
+            activeLocale: doc.defaultLocale,
+          });
+        },
+
+        createCv: async (options) => {
+          const now = generateISODateTime();
+          const newCv: CvDocument = {
+            id: generateId(),
+            name: options.name,
+            profileId: options.profileId ?? null,
+            profileOverrides: {},
+            sections: [],
+            themeId: options.themeId,
+            defaultLocale: options.defaultLocale,
+            availableLocales: [options.defaultLocale],
+            pageFormat: "A4",
+            createdAt: now,
+            updatedAt: now,
+          };
+
+          await db.cvs.put(newCv);
+          useCvStore.temporal.getState().clear();
+          set({
+            activeCvId: newCv.id,
+            document: newCv,
+            activeLocale: newCv.defaultLocale,
+          });
+          return newCv.id;
+        },
+
+        updateDocument: (updates) => {
+          const { document } = get();
+          if (!document) return;
+          set({ document: withTimestamp(document, updates) });
+        },
+
+        updateProfileOverride: (field, value) => {
+          const { document } = get();
+          if (!document) return;
+          set({
+            document: withTimestamp(document, {
+              profileOverrides: {
+                ...document.profileOverrides,
+                [field]: value,
+              },
+            }),
+          });
+        },
+
+        clearProfileOverride: (field) => {
+          const { document } = get();
+          if (!document) return;
+          const overrides = document.profileOverrides as Record<
+            string,
+            unknown
+          >;
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { [field]: _, ...rest } = overrides;
+          set({
+            document: withTimestamp(document, { profileOverrides: rest }),
+          });
+        },
+
+        addSection: (type) => {
+          const { document } = get();
+          if (!document) return;
+          const sectionDefaults: Record<string, unknown> =
+            type === "introduction" || type === "freeform"
+              ? { content: {} }
+              : type === "skills" || type === "interests"
+                ? { categories: [] }
+                : { items: [] };
+          const newSection = {
+            id: generateId(),
+            type,
+            title: {},
+            order: document.sections.length,
+            visible: true,
+            ...sectionDefaults,
+          } as Section;
+          set({
+            document: withTimestamp(document, {
+              sections: [...document.sections, newSection],
+            }),
+          });
+        },
+
+        removeSection: (sectionId) => {
+          const { document } = get();
+          if (!document) return;
+          const sections = document.sections.filter((s) => s.id !== sectionId);
+          if (sections.length === document.sections.length) return;
+          set({ document: withTimestamp(document, { sections }) });
+        },
+
+        reorderSections: (fromIndex, toIndex) => {
+          const { document } = get();
+          if (!document) return;
+          set({
+            document: withTimestamp(document, {
+              sections: arrayMove(document.sections, fromIndex, toIndex),
+            }),
+          });
+        },
+
+        updateSection: (sectionId, updates) => {
+          const { document } = get();
+          if (!document) return;
+          set({
+            document: withTimestamp(
+              updateDocSection(
+                document,
+                sectionId,
+                (s) => ({ ...s, ...updates }) as Section,
+              ),
+              {},
+            ),
+          });
+        },
+
+        addSectionItem: (sectionId, item) => {
+          const { document } = get();
+          if (!document) return;
+          set({
+            document: withTimestamp(
+              updateDocSection(document, sectionId, (s) => {
+                if (!("items" in s)) return s;
+                return { ...s, items: [...s.items, item] } as Section;
+              }),
+              {},
+            ),
+          });
+        },
+
+        removeSectionItem: (sectionId, itemId) => {
+          const { document } = get();
+          if (!document) return;
+          set({
+            document: withTimestamp(
+              updateDocSection(document, sectionId, (s) => {
+                if (!("items" in s)) return s;
+                return {
+                  ...s,
+                  items: (s.items as Array<{ id: EntityId }>).filter(
+                    (i) => i.id !== itemId,
+                  ),
+                } as Section;
+              }),
+              {},
+            ),
+          });
+        },
+
+        updateSectionItem: (sectionId, itemId, data) => {
+          const { document } = get();
+          if (!document) return;
+          set({
+            document: withTimestamp(
+              updateDocSectionItem(document, sectionId, itemId, (item) => ({
+                ...item,
+                ...data,
+              })),
+              {},
+            ),
+          });
+        },
+
+        reorderSectionItems: (sectionId, fromIndex, toIndex) => {
+          const { document } = get();
+          if (!document) return;
+          set({
+            document: withTimestamp(
+              updateDocSection(document, sectionId, (s) => {
+                if (!("items" in s)) return s;
+                return {
+                  ...s,
+                  items: arrayMove(
+                    s.items as Array<{ id: EntityId }>,
+                    fromIndex,
+                    toIndex,
+                  ),
+                } as Section;
+              }),
+              {},
+            ),
+          });
+        },
+
+        setActiveLocale: (locale) => set({ activeLocale: locale }),
+      }),
+      {
+        limit: 100,
+        equality: (a, b) => a.document === b.document,
+        partialize: (state) =>
+          ({ document: state.document }) as CvState & CvActions,
+      },
+    ),
+  ),
+);
+
+export function useUndoRedo() {
+  return useStore(useCvStore.temporal, (state) => ({
+    undo: state.undo,
+    redo: state.redo,
+    canUndo: state.pastStates.length > 0,
+    canRedo: state.futureStates.length > 0,
+  }));
+}

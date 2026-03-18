@@ -3,27 +3,48 @@
 ## Settings
 
 ```typescript
+type ColorScheme = 'light' | 'dark' | 'system';
+
 interface ShortcutBinding {
   action: string;
   keys: string;
-}
-
-interface PruningConfig {
-  /** Maximum number of untagged snapshots to keep per CV */
-  maxUntaggedSnapshots: number;
-  /** Tagged snapshots are always preserved regardless of this limit */
 }
 
 interface AppSettings {
   id: 'singleton';
   /** App UI locale (distinct from CV content locale) */
   locale: Locale;
-  darkMode: boolean;
+  /** Color scheme preference */
+  colorScheme: ColorScheme;
   /** Editor panel position relative to preview */
   panelPosition: 'left' | 'right';
+  /** Keyboard shortcut bindings */
   shortcuts: ShortcutBinding[];
-  pruning: PruningConfig;
+  /** Maximum number of untagged snapshots to keep per CV. Tagged snapshots are always preserved. */
+  maxSnapshots: number;
+  /** Debounce interval for auto-save (ms) */
+  autoSaveDelayMs: number;
 }
+```
+
+### Changes from original design
+
+- **`darkMode: boolean` → `colorScheme: ColorScheme`**: Supports three modes (`light`, `dark`, `system`) instead of a binary toggle.
+- **`pruning: PruningConfig` → `maxSnapshots: number`**: Flattened. The `PruningConfig` wrapper added no value for a single field. Tagged snapshots are always preserved regardless of this limit (documented in the field description).
+- **Added `autoSaveDelayMs`**: User-configurable auto-save delay. Default: 2000ms. Exposed in settings UI.
+
+### Default Values
+
+```typescript
+const DEFAULT_SETTINGS: AppSettings = {
+  id: 'singleton',
+  locale: 'en',
+  colorScheme: 'system',
+  panelPosition: 'left',
+  shortcuts: [],
+  maxSnapshots: 50,
+  autoSaveDelayMs: 2000,
+};
 ```
 
 ---

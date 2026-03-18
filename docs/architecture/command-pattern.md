@@ -1,15 +1,47 @@
 # Command Pattern Implementation
 
-All state mutations that should be undoable and logged are wrapped in commands. This document covers the command interface, factories, debouncing strategy, registry, and integration with Zundo.
+All state mutations that should be undoable and logged are wrapped in commands. This document covers the two command types, their roles, and the phased implementation plan.
 
 ---
 
-## Command Interface
+## Phased Implementation
+
+### MVP — Zundo Only
+
+For MVP, undo/redo is handled entirely by Zundo's `temporal` middleware, which tracks state snapshots in memory. No command middleware, no command registry, no debounced command merging.
+
+This is sufficient because:
+- Zundo provides undo/redo state transitions out of the box.
+- The action history UI and snapshot descriptions (which need the command registry) are V1.1 features.
+- Zundo's `equality` option handles deduplication of no-op changes.
+- Rapid edit coalescing can be handled by Zundo's `handleSet` with throttling.
+
+### V1.1 — Command Middleware + Registry
+
+When building the snapshot/history UI, the command system will be added:
+1. **Command middleware** wraps the Zustand store's `set()` to record metadata about each mutation.
+2. **Command registry** accumulates command records between snapshots.
+3. **Debounced command merging** coalesces rapid keystrokes into single logical commands.
+
+The middleware stack will become:
+```
+commandMiddleware(subscribeWithSelector(temporal(storeCreator)))
+```
+
+---
+
+## Command Types
+
+There are two distinct command types, serving different purposes:
+
+### `ExecutableCommand` (In-Memory, V1.1+)
+
+Used by command factories to define mutations with execute/undo behavior. These are the behavioral objects that drive the command middleware.
 
 ```typescript
-interface Command {
-  /** Unique command type identifier, e.g. 'cv:update-profile-field' */
-  type: string;
+interface ExecutableCommand {
+  /** Command type from the CommandType union */
+  type: CommandType;
 
   /** Human-readable description, e.g. 'Updated title to "Senior Engineer"' */
   description: string;
@@ -25,46 +57,71 @@ interface Command {
 }
 ```
 
+### `CommandRecord` (Persisted, V1.1+)
+
+Data record stored in snapshots. Contains before/after state for diffing and history display. This is the serializable form attached to `Snapshot.commandLog`.
+
+```typescript
+interface CommandRecord {
+  id: EntityId;
+  type: CommandType;
+  /** Human-readable description */
+  description: string;
+  timestamp: ISODateTimeString;
+  /** Operation-specific payload for history display and diffing */
+  data: {
+    before: unknown;
+    after: unknown;
+  };
+}
+```
+
+### `CommandType` Union
+
+Shared by both command types. Defines all possible mutation categories:
+
+```typescript
+type CommandType =
+  | 'profile.update'
+  | 'section.add'
+  | 'section.remove'
+  | 'section.update'
+  | 'section.reorder'
+  | 'section.toggle-visibility'
+  | 'item.add'
+  | 'item.remove'
+  | 'item.update'
+  | 'item.reorder'
+  | 'theme.change'
+  | 'theme.override'
+  | 'layout.change'
+  | 'locale.add'
+  | 'locale.remove'
+  | 'page-format.change'
+  | 'cv.rename';
+```
+
 ---
 
-## Command Factories
+## Command Factories (V1.1+)
 
 Commands are created by factory functions that capture the before/after context via closure. Each feature defines its own command factories.
 
 ```typescript
-// src/lib/commands/cv-commands.ts
-
-function updateProfileFieldCommand(
-  field: keyof Profile,
-  newValue: LocalizedString,
-  previousValue: LocalizedString
-): Command {
+function updateProfileOverrideCommand(
+  field: string,
+  newValue: unknown,
+  previousValue: unknown
+): ExecutableCommand {
   return {
-    type: 'cv:update-profile-field',
+    type: 'profile.update',
     description: `Updated ${field}`,
     timestamp: Date.now(),
     execute: () => {
-      useCvStore.getState().setProfileField(field, newValue);
+      useCvStore.getState().updateProfileOverride(field, newValue);
     },
     undo: () => {
-      useCvStore.getState().setProfileField(field, previousValue);
-    },
-  };
-}
-
-function reorderSectionsCommand(
-  fromIndex: number,
-  toIndex: number
-): Command {
-  return {
-    type: 'cv:reorder-sections',
-    description: `Moved section from position ${fromIndex + 1} to ${toIndex + 1}`,
-    timestamp: Date.now(),
-    execute: () => {
-      useCvStore.getState().applySectionReorder(fromIndex, toIndex);
-    },
-    undo: () => {
-      useCvStore.getState().applySectionReorder(toIndex, fromIndex);
+      useCvStore.getState().updateProfileOverride(field, previousValue);
     },
   };
 }
@@ -72,83 +129,31 @@ function reorderSectionsCommand(
 
 ---
 
-## Debouncing Strategy for Rapid Edits
+## Debouncing Strategy (V1.1+)
 
 Text input generates many mutations per second. These must be coalesced into a single logical command (e.g., "Updated title") rather than one per keystroke.
 
-Strategy: **trailing debounce with command merging.** While the user is typing in the same field, mutations accumulate. When input pauses (300ms default), a single command is recorded that captures the state before the first keystroke and the state after the last.
-
-```typescript
-interface DebouncedCommandContext {
-  type: string;
-  field: string;
-  originalValue: unknown;  // Captured once, on first keystroke
-  timer: ReturnType<typeof setTimeout> | null;
-}
-
-const activeContexts = new Map<string, DebouncedCommandContext>();
-
-function debouncedCommand(
-  key: string,         // Unique key per field, e.g. 'profile.title'
-  type: string,
-  description: string,
-  getCurrentValue: () => unknown,
-  delayMs: number = 300
-): void {
-  let ctx = activeContexts.get(key);
-
-  if (!ctx) {
-    // First mutation in this debounce window -- capture the original value
-    ctx = {
-      type,
-      field: key,
-      originalValue: structuredClone(getCurrentValue()),
-      timer: null,
-    };
-    activeContexts.set(key, ctx);
-  }
-
-  // Reset the debounce timer
-  if (ctx.timer) clearTimeout(ctx.timer);
-  ctx.timer = setTimeout(() => {
-    const finalValue = getCurrentValue();
-    commandRegistry.record({
-      type: ctx!.type,
-      description,
-      timestamp: Date.now(),
-      execute: () => { /* already applied */ },
-      undo: () => {
-        // Restore the original value from before the debounce window
-        useCvStore.getState().setProfileField(ctx!.field as keyof Profile, ctx!.originalValue as LocalizedString);
-      },
-    });
-    activeContexts.delete(key);
-  }, delayMs);
-}
-```
+Strategy: **trailing debounce with command merging.** While the user is typing in the same field, mutations accumulate. When input pauses (300ms default), a single command record is created that captures the state before the first keystroke and the state after the last.
 
 ---
 
-## Command Registry
+## Command Registry (V1.1+)
 
-The command registry maintains the log of executed commands. It stores commands per snapshot interval, so each snapshot carries a description of what changed since the previous one.
+The command registry maintains the log of executed commands per snapshot interval. When a snapshot is created, the accumulated commands are attached to it, then the log resets.
 
 ```typescript
 class CommandRegistry {
-  private currentLog: Command[] = [];
+  private currentLog: CommandRecord[] = [];
 
-  /** Record a command that has already been executed */
-  record(command: Command): void {
+  record(command: CommandRecord): void {
     this.currentLog.push(command);
   }
 
-  /** Get all commands since last snapshot */
-  getCommandsSinceLastSnapshot(): Command[] {
+  getCommandsSinceLastSnapshot(): CommandRecord[] {
     return [...this.currentLog];
   }
 
-  /** Called when a snapshot is created. Returns the commands to attach to it, then resets. */
-  flush(): Command[] {
+  flush(): CommandRecord[] {
     const flushed = this.currentLog;
     this.currentLog = [];
     return flushed;
@@ -164,23 +169,23 @@ export const commandRegistry = new CommandRegistry();
 
 Zundo and the command system serve complementary roles:
 
-- **Zundo** handles the actual undo/redo state transitions. It stores state snapshots in memory and can restore any previous state. This is the mechanism.
-- **Command registry** provides the human-readable narrative. It records what the user did in named terms. This powers the action history UI and snapshot descriptions.
+- **Zundo** handles the actual undo/redo state transitions (the mechanism).
+- **Command registry** provides the human-readable narrative (the history UI).
 
 They do not conflict because:
-1. The command middleware records the command metadata.
-2. Zundo's `temporal` middleware (wrapped around the same store) independently tracks state snapshots.
-3. Undo/redo calls `useCvStore.temporal.getState().undo()` -- Zundo restores the previous state.
-4. The command registry is informational only; it never drives state transitions.
+1. The command middleware records metadata (type, description) — it does not drive state.
+2. Zundo's `temporal` middleware independently tracks state snapshots.
+3. Undo/redo calls `useCvStore.temporal.getState().undo()` — Zundo restores the previous state.
+4. The command registry is informational only.
 
 ```
 User action
   |
-  +--> Command middleware records { type, description }
-  |
   +--> Zustand set() updates state
   |
   +--> Zundo temporal middleware captures state snapshot
+  |
+  +--> Command middleware records { type, description }  (V1.1+)
   |
   +--> Persistence subscription triggers debounced auto-save
 ```

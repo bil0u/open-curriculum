@@ -1,1 +1,1 @@
-// Barrel export
+export { CvGeniusDatabase, db } from "./database";

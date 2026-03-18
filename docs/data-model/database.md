@@ -11,7 +11,6 @@ class CvGeniusDatabase extends Dexie {
   snapshots!: Table<Snapshot, EntityId>;
   workingStates!: Table<WorkingState, EntityId>;
   themes!: Table<ThemeDefinition, EntityId>;
-  themeOverrides!: Table<ThemeOverride, EntityId>;
   settings!: Table<AppSettings, string>;
   blobs!: Table<StoredBlob, EntityId>;
 
@@ -23,16 +22,20 @@ class CvGeniusDatabase extends Dexie {
       // Non-indexed fields are stored but not listed here.
       profiles: 'id, updatedAt',
       cvs: 'id, profileId, themeId, updatedAt',
-      snapshots: 'id, cvId, timestamp, tag',
+      snapshots: 'id, cvId, timestamp',
       workingStates: 'cvId',
       themes: 'id, name',
-      themeOverrides: 'id, themeId, cvId, [themeId+cvId]',
       settings: 'id',
       blobs: 'id, createdAt',
     });
   }
 }
 ```
+
+### Changes from original design
+
+- **Removed `themeOverrides` table**: Theme overrides are stored inline on `CvDocument.themeOverrides` (`ThemeOverrideData`). This avoids dual storage and keeps overrides co-located with the CV they customize. A separate table can be added in a future version if indexed queries on overrides become necessary.
+- **Removed `tag` index on `snapshots`**: Tagged versions are a V1.1 feature. The index can be added via a schema migration when needed. Dexie handles optional/undefined fields in indexes correctly (records where the field is undefined won't appear in index queries), but deferring avoids unnecessary index maintenance.
 
 ---
 
@@ -49,14 +52,10 @@ class CvGeniusDatabase extends Dexie {
 | `snapshots` | `id` (PK) | Direct lookup |
 | `snapshots` | `cvId` | Retrieve snapshot history for a CV |
 | `snapshots` | `timestamp` | Chronological ordering |
-| `snapshots` | `tag` | Find tagged/named versions |
 | `workingStates` | `cvId` (PK) | One working state per CV, direct lookup |
 | `themes` | `id` (PK) | Direct lookup |
 | `themes` | `name` | Theme search/listing |
-| `themeOverrides` | `id` (PK) | Direct lookup |
-| `themeOverrides` | `themeId` | Find all overrides for a theme |
-| `themeOverrides` | `cvId` | Find override for a specific CV |
-| `themeOverrides` | `[themeId+cvId]` | Compound index for unique lookup |
+| `settings` | `id` (PK) | Singleton lookup (`id: 'singleton'`) |
 | `blobs` | `id` (PK) | Direct lookup |
 | `blobs` | `createdAt` | Cleanup of orphaned blobs by age |
 

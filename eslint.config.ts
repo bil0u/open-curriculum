@@ -5,7 +5,15 @@ import jsxA11y from "eslint-plugin-jsx-a11y";
 import { config, configs } from "typescript-eslint";
 
 export default config(
-  { ignores: ["dist", "node_modules", "playwright-report", "test-results"] },
+  {
+    ignores: [
+      "dist",
+      "node_modules",
+      "playwright-report",
+      "test-results",
+      ".claude",
+    ],
+  },
   js.configs.recommended,
   ...configs.strict,
   jsxA11y.flatConfigs.recommended,
