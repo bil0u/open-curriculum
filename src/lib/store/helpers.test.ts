@@ -12,7 +12,7 @@ const mockDoc: CvDocument = {
       id: "s1",
       type: "experience",
       title: {},
-      order: 0,
+
       visible: true,
       items: [
         {
@@ -37,7 +37,7 @@ const mockDoc: CvDocument = {
       id: "s2",
       type: "introduction",
       title: {},
-      order: 1,
+
       visible: true,
       content: { en: "Hello" },
     },

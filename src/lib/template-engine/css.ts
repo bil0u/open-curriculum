@@ -1,4 +1,8 @@
-import type { ThemeDefinition, ThemeOverrideData, ThemeFont } from "@/lib/types";
+import type {
+  ThemeDefinition,
+  ThemeOverrideData,
+  ThemeFont,
+} from "@/lib/types";
 
 const CSS_RESET = `
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

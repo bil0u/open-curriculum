@@ -335,7 +335,7 @@ describe("removeSection", () => {
             id: "s1",
             type: "experience",
             title: {},
-            order: 0,
+
             visible: true,
             items: [],
           },
@@ -343,7 +343,7 @@ describe("removeSection", () => {
             id: "s2",
             type: "introduction",
             title: {},
-            order: 1,
+
             visible: true,
             content: {},
           },
@@ -391,7 +391,7 @@ describe("reorderSections", () => {
             id: "s1",
             type: "experience",
             title: {},
-            order: 0,
+
             visible: true,
             items: [],
           },
@@ -399,7 +399,7 @@ describe("reorderSections", () => {
             id: "s2",
             type: "introduction",
             title: {},
-            order: 1,
+
             visible: true,
             content: {},
           },
@@ -407,7 +407,7 @@ describe("reorderSections", () => {
             id: "s3",
             type: "education",
             title: {},
-            order: 2,
+
             visible: true,
             items: [],
           },

@@ -5,10 +5,7 @@ import type { RenderResult } from "@/lib/template-engine";
  * The output is a self-contained document that can be opened in any browser.
  * Expects pre-sanitized HTML from renderCv().
  */
-export function exportHtml(
-  result: RenderResult,
-  profileName: string,
-): string {
+export function exportHtml(result: RenderResult, profileName: string): string {
   return `<!DOCTYPE html>
 <html lang="${result.context.locale}">
 <head>

@@ -1,10 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import type {
-  CvDocument,
-  Profile,
-  ThemeDefinition,
-} from "@/lib/types";
+import type { CvDocument, Profile, ThemeDefinition } from "@/lib/types";
 
 import { renderCv } from "./render";
 import { buildRenderContext } from "./context";
@@ -18,10 +14,18 @@ const mockProfile: Profile = {
   website: { fr: "https://github.com/bil0u" },
   location: { fr: "Toulouse, France" },
   socialLinks: [
-    { platform: "github", url: "https://github.com/bil0u", label: { fr: "bil0u" } },
+    {
+      platform: "github",
+      url: "https://github.com/bil0u",
+      label: { fr: "bil0u" },
+    },
   ],
   meta: [
-    { key: "nationality", label: { fr: "Nationalité" }, value: { fr: "Français" } },
+    {
+      key: "nationality",
+      label: { fr: "Nationalité" },
+      value: { fr: "Français" },
+    },
   ],
   createdAt: "2024-01-01T00:00:00Z",
   updatedAt: "2024-01-01T00:00:00Z",
@@ -200,7 +204,9 @@ describe("buildRenderContext", () => {
     });
 
     const skillsSection = ctx.sections.find((s) => s.type === "skills");
-    const categories = skillsSection?.categories as Array<Record<string, unknown>>;
+    const categories = skillsSection?.categories as Array<
+      Record<string, unknown>
+    >;
     expect(categories).toHaveLength(1);
     expect(categories[0]?.name).toBe("Langages");
   });
@@ -295,16 +301,11 @@ describe("renderCv", () => {
 
   it("uses the _default partial for unknown section types", async () => {
     // The test theme has no 'introduction' partial but has _default
+    const { introduction: _, ...restTemplates } = mockTheme.templates;
     const themeWithoutIntro = {
       ...mockTheme,
-      templates: {
-        ...mockTheme.templates,
-        introduction: undefined,
-      },
+      templates: restTemplates,
     };
-    // Remove the introduction template so it falls back to _default
-    delete (themeWithoutIntro.templates as Record<string, string | undefined>)
-      .introduction;
 
     const result = await renderCv(
       mockDoc,

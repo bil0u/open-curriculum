@@ -311,7 +311,18 @@
 
 /* ── Print ── */
 @media print {
-  .cv-page { break-inside: avoid; }
-  .cv-sidebar { background: var(--cv-bg-sidebar) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .cv-tag { background: var(--cv-accent-color) !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .cv-page {
+    break-inside: avoid;
+  }
+  .cv-sidebar {
+    background: var(--cv-bg-sidebar) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .cv-tag {
+    background: var(--cv-accent-color) !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }

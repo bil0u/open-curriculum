@@ -1,11 +1,6 @@
 import DOMPurify from "dompurify";
 
-import type {
-  CvDocument,
-  Locale,
-  Profile,
-  ThemeDefinition,
-} from "@/lib/types";
+import type { CvDocument, Locale, Profile, ThemeDefinition } from "@/lib/types";
 
 import { assembleCss } from "./css";
 import { buildRenderContext, type CvRenderContext } from "./context";

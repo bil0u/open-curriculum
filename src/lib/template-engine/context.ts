@@ -57,7 +57,9 @@ export function buildRenderContext(
   const resolvedProfile = resolveProfile(mergedProfile, locale);
 
   const visibleSections = doc.sections.filter((s) => s.visible);
-  const resolvedSections = visibleSections.map((s) => resolveSection(s, locale));
+  const resolvedSections = visibleSections.map((s) =>
+    resolveSection(s, locale),
+  );
 
   const slots = buildSlots(
     visibleSections,
@@ -67,8 +69,11 @@ export function buildRenderContext(
 
   const pageDims =
     typeof doc.pageFormat === "string"
-      ? PAGE_DIMENSIONS[doc.pageFormat] ?? PAGE_DIMENSIONS["A4"]!
-      : { width: `${doc.pageFormat.widthMm}mm`, height: `${doc.pageFormat.heightMm}mm` };
+      ? (PAGE_DIMENSIONS[doc.pageFormat] ?? PAGE_DIMENSIONS["A4"]!)
+      : {
+          width: `${doc.pageFormat.widthMm}mm`,
+          height: `${doc.pageFormat.heightMm}mm`,
+        };
 
   return {
     profile: resolvedProfile,

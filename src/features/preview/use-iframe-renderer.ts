@@ -21,8 +21,7 @@ export function useIframeRenderer() {
     const iframe = iframeRef.current;
     if (!iframe) return;
 
-    const iframeDoc =
-      iframe.contentDocument ?? iframe.contentWindow?.document;
+    const iframeDoc = iframe.contentDocument ?? iframe.contentWindow?.document;
     if (!iframeDoc) return;
 
     // Write a minimal document — CSS goes in <head>, content in <body>
@@ -45,11 +44,7 @@ export function useIframeRenderer() {
     const previewer = new Previewer();
     previewerRef.current = previewer;
 
-    await previewer.preview(
-      result.html,
-      [],
-      iframeDoc.body,
-    );
+    await previewer.preview(result.html, [], iframeDoc.body);
   }, []);
 
   const printPdf = useCallback(() => {
