@@ -3,6 +3,7 @@ import { create, useStore } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
 import { db } from "@/lib/db";
+import { validateCvDocument } from "@/lib/db/integrity";
 import type {
   CvDocument,
   EntityId,
@@ -10,7 +11,7 @@ import type {
   Section,
   SectionType,
 } from "@/lib/types";
-import { generateId, generateISODateTime } from "@/lib/utils";
+import { generateId, generateISODateTime, isOk } from "@/lib/utils";
 
 import { arrayMove, updateDocSection, updateDocSectionItem } from "./helpers";
 
@@ -30,10 +31,11 @@ export interface CreateCvOptions {
 export interface CvActions {
   loadCv: (id: EntityId) => Promise<void>;
   createCv: (options: CreateCvOptions) => Promise<EntityId>;
+  deleteCv: (id: EntityId) => Promise<void>;
   updateDocument: (updates: Partial<CvDocument>) => void;
   updateProfileOverride: (field: string, value: unknown) => void;
   clearProfileOverride: (field: string) => void;
-  addSection: (type: SectionType) => void;
+  addSection: (type: SectionType) => EntityId | undefined;
   removeSection: (sectionId: EntityId) => void;
   reorderSections: (fromIndex: number, toIndex: number) => void;
   updateSection: (sectionId: EntityId, updates: Partial<Section>) => void;
@@ -71,9 +73,46 @@ export const useCvStore = create<CvState & CvActions>()(
         activeLocale: "en",
 
         loadCv: async (id) => {
+          // Try working state first, validate its integrity (DS-06)
           const working = await db.workingStates.get(id);
-          const doc = working?.state ?? (await db.cvs.get(id));
-          if (!doc) throw new Error(`CV not found: ${id}`);
+          let doc: CvDocument | undefined;
+          let recoveredFromCorruption = false;
+
+          if (working?.state) {
+            const result = validateCvDocument(working.state);
+            if (isOk(result)) {
+              doc = result.value;
+            } else {
+              // Working state corrupted — try last snapshot
+              const snapshots = await db.snapshots
+                .where("cvId")
+                .equals(id)
+                .sortBy("timestamp");
+              const snapshot = snapshots[snapshots.length - 1];
+
+              if (snapshot?.state) {
+                const snapshotResult = validateCvDocument(snapshot.state);
+                if (isOk(snapshotResult)) {
+                  doc = snapshotResult.value;
+                  recoveredFromCorruption = true;
+                }
+              }
+
+              // Clear corrupted working state
+              await db.workingStates.delete(id);
+            }
+          }
+
+          // Fall back to stored CV document
+          if (!doc) {
+            const stored = await db.cvs.get(id);
+            if (!stored) throw new Error(`CV not found: ${id}`);
+            const storeResult = validateCvDocument(stored);
+            if (!isOk(storeResult)) {
+              throw new Error(`CV data is corrupted: ${storeResult.error}`);
+            }
+            doc = storeResult.value;
+          }
 
           useCvStore.temporal.getState().clear();
           set({
@@ -81,6 +120,12 @@ export const useCvStore = create<CvState & CvActions>()(
             document: doc,
             activeLocale: doc.defaultLocale,
           });
+
+          if (recoveredFromCorruption) {
+            console.warn(
+              `CV ${id}: working state was corrupted, recovered from last snapshot`,
+            );
+          }
         },
 
         createCv: async (options) => {
@@ -107,6 +152,22 @@ export const useCvStore = create<CvState & CvActions>()(
             activeLocale: newCv.defaultLocale,
           });
           return newCv.id;
+        },
+
+        deleteCv: async (id) => {
+          await db.transaction(
+            "rw",
+            [db.cvs, db.workingStates, db.snapshots],
+            async () => {
+              await db.cvs.delete(id);
+              await db.workingStates.delete(id);
+              await db.snapshots.where("cvId").equals(id).delete();
+            },
+          );
+          if (get().activeCvId === id) {
+            useCvStore.temporal.getState().clear();
+            set({ activeCvId: null, document: null });
+          }
         },
 
         updateDocument: (updates) => {
@@ -144,7 +205,7 @@ export const useCvStore = create<CvState & CvActions>()(
 
         addSection: (type) => {
           const { document } = get();
-          if (!document) return;
+          if (!document) return undefined;
           const sectionDefaults: Record<string, unknown> =
             type === "introduction" || type === "freeform"
               ? { content: {} }
@@ -163,6 +224,7 @@ export const useCvStore = create<CvState & CvActions>()(
               sections: [...document.sections, newSection],
             }),
           });
+          return newSection.id;
         },
 
         removeSection: (sectionId) => {
