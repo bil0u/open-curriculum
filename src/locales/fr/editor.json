@@ -1,0 +1,101 @@
+{
+  "profile": {
+    "heading": "Profil",
+    "full_name": "Nom complet",
+    "job_title": "Intitulé du poste",
+    "email": "Adresse e-mail",
+    "phone": "Numéro de téléphone",
+    "location": "Localisation",
+    "website": "Site web",
+    "photo": "Photo"
+  },
+  "sections": {
+    "add": "Ajouter une section",
+    "remove": "Supprimer la section",
+    "heading": "Sections",
+    "untitled": "Section sans titre",
+    "delete_confirm": "Êtes-vous sûr de vouloir supprimer cette section ? Cette action est irréversible.",
+    "visibility_show": "Afficher la section",
+    "visibility_hide": "Masquer la section",
+    "expand": "Développer la section",
+    "collapse": "Réduire la section"
+  },
+  "section_types": {
+    "introduction": "Introduction",
+    "experience": "Expérience",
+    "education": "Formation",
+    "skills": "Compétences",
+    "languages": "Langues",
+    "projects": "Projets",
+    "interests": "Centres d'intérêt",
+    "certifications": "Certifications",
+    "publications": "Publications",
+    "references": "Références",
+    "awards": "Récompenses",
+    "freeform": "Section personnalisée"
+  },
+  "fields": {
+    "content": "Contenu",
+    "add_item": "Ajouter un élément",
+    "remove_item": "Supprimer l'élément",
+    "add_category": "Ajouter une catégorie",
+    "remove_category": "Supprimer la catégorie",
+    "add_skill": "Ajouter une compétence",
+    "remove_skill": "Supprimer la compétence",
+    "add_interest": "Ajouter un centre d'intérêt",
+    "remove_interest": "Supprimer le centre d'intérêt",
+    "organization": "Organisation",
+    "role": "Rôle",
+    "category": "Catégorie",
+    "start_date": "Date de début",
+    "end_date": "Date de fin",
+    "description": "Description",
+    "location": "Lieu",
+    "url": "URL",
+    "institution": "Établissement",
+    "degree": "Diplôme",
+    "field_of_study": "Domaine d'études",
+    "grade": "Mention",
+    "language": "Langue",
+    "proficiency": "Niveau",
+    "certification": "Certification",
+    "name": "Nom",
+    "issuer": "Organisme",
+    "date": "Date",
+    "title": "Titre",
+    "publisher": "Éditeur",
+    "company": "Entreprise",
+    "contact": "Contact",
+    "quote": "Citation",
+    "awarder": "Décerné par",
+    "tags": "Mots-clés",
+    "highlights": "Points clés",
+    "co_authors": "Co-auteurs",
+    "skill_name": "Nom de la compétence",
+    "category_name": "Nom de la catégorie",
+    "category_description": "Description",
+    "interest_item": "Centre d'intérêt"
+  },
+  "experience_categories": {
+    "work": "Emploi",
+    "volunteer": "Bénévolat",
+    "military": "Militaire",
+    "freelance": "Freelance",
+    "other": "Autre"
+  },
+  "translation": {
+    "showing_fallback": "Affichage du texte en {{locale}}",
+    "use_as_is": "Utiliser tel quel"
+  },
+  "validation": {
+    "required_field": "Ce champ est requis",
+    "missing_section_warning": "Certaines sections ont des champs obligatoires manquants"
+  },
+  "drag": {
+    "instructions": "Appuyez sur Espace pour saisir, les flèches pour déplacer, Espace pour déposer, Échap pour annuler",
+    "grabbed": "Section saisie. Utilisez les touches fléchées pour déplacer",
+    "moved": "Section déplacée à la position {{position}}",
+    "dropped": "Section déposée",
+    "cancelled": "Réorganisation annulée"
+  }
+}

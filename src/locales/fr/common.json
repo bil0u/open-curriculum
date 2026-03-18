@@ -1,3 +1,60 @@
 {
-  "app_name": "CV Genius"
+  "app_name": "CV Genius",
+  "actions": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "confirm": "Confirmer",
+    "create": "Créer",
+    "duplicate": "Dupliquer",
+    "export": "Exporter",
+    "import": "Importer",
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "close": "Fermer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "remove": "Retirer",
+    "search": "Rechercher"
+  },
+  "labels": {
+    "name": "Nom",
+    "email": "E-mail",
+    "phone": "Téléphone",
+    "title": "Titre",
+    "description": "Description",
+    "required": "Requis",
+    "optional": "Facultatif"
+  },
+  "status": {
+    "loading": "Chargement…",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré",
+    "error": "Une erreur est survenue",
+    "unsaved_changes": "Modifications non enregistrées"
+  },
+  "nav": {
+    "editor": "Éditeur",
+    "theme": "Thème",
+    "themes": "Thèmes",
+    "versions": "Versions",
+    "settings": "Paramètres",
+    "export": "Exporter"
+  },
+  "empty_state": {
+    "heading": "Aucun CV chargé",
+    "description": "Créez votre premier CV pour commencer."
+  },
+  "panels": {
+    "editor": "Éditeur",
+    "preview": "Aperçu"
+  },
+  "storage": {
+    "not_persisted_warning": "Votre navigateur peut supprimer vos données en cas de manque d'espace. Exportez régulièrement vos CV pour éviter toute perte."
+  },
+  "confirm_delete": {
+    "title": "Confirmer la suppression",
+    "message": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer cet élément ?",
+    "confirm_button": "Supprimer"
+  }
 }

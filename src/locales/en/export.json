@@ -1,0 +1,9 @@
+{
+  "title": "Export CV",
+  "export_pdf": "Export as PDF",
+  "export_html": "Export as HTML",
+  "export_json": "Export as JSON",
+  "downloading": "Preparing download…",
+  "success": "Export successful",
+  "error": "Export failed. Please try again."
+}

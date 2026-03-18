@@ -1,0 +1,26 @@
+{
+  "list": {
+    "title": "My CVs",
+    "empty": "You haven't created any CV yet. Start by creating a new one.",
+    "create_new": "New CV"
+  },
+  "create": {
+    "title": "Create a new CV",
+    "name_label": "CV name",
+    "name_placeholder": "e.g. Software Engineer — Google",
+    "name_required": "Please enter a name for your CV"
+  },
+  "item": {
+    "updated": "Updated {{date}}",
+    "edit": "Rename",
+    "delete": "Delete"
+  },
+  "rename": {
+    "label": "CV name"
+  },
+  "delete": {
+    "title": "Delete CV",
+    "message": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+    "confirm": "Delete CV"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "snapshots": {
+    "title": "Instantanés",
+    "empty": "Aucun instantané pour l'instant. Enregistrez un instantané pour conserver une version de votre CV.",
+    "create": "Enregistrer un instantané",
+    "restore": "Restaurer cette version",
+    "discard": "Supprimer l'instantané"
+  },
+  "auto_save": {
+    "enabled": "Sauvegarde automatique activée",
+    "last_saved": "Dernière sauvegarde {{time}}"
+  }
+}

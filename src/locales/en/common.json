@@ -1,3 +1,60 @@
 {
-  "app_name": "CV Genius"
+  "app_name": "CV Genius",
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "create": "Create",
+    "duplicate": "Duplicate",
+    "export": "Export",
+    "import": "Import",
+    "undo": "Undo",
+    "redo": "Redo",
+    "close": "Close",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "search": "Search"
+  },
+  "labels": {
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "title": "Title",
+    "description": "Description",
+    "required": "Required",
+    "optional": "Optional"
+  },
+  "status": {
+    "loading": "Loading…",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "error": "An error occurred",
+    "unsaved_changes": "Unsaved changes"
+  },
+  "nav": {
+    "editor": "Editor",
+    "theme": "Theme",
+    "themes": "Themes",
+    "versions": "Versions",
+    "settings": "Settings",
+    "export": "Export"
+  },
+  "empty_state": {
+    "heading": "No CV loaded",
+    "description": "Create your first CV to get started."
+  },
+  "panels": {
+    "editor": "Editor",
+    "preview": "Preview"
+  },
+  "storage": {
+    "not_persisted_warning": "Your browser may delete your data under storage pressure. Export your CVs regularly to avoid data loss."
+  },
+  "confirm_delete": {
+    "title": "Confirm deletion",
+    "message": "This action cannot be undone. Are you sure you want to delete this item?",
+    "confirm_button": "Delete"
+  }
 }

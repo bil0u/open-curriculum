@@ -1,0 +1,101 @@
+{
+  "profile": {
+    "heading": "Profile",
+    "full_name": "Full name",
+    "job_title": "Job title",
+    "email": "Email address",
+    "phone": "Phone number",
+    "location": "Location",
+    "website": "Website",
+    "photo": "Photo"
+  },
+  "sections": {
+    "add": "Add section",
+    "remove": "Remove section",
+    "heading": "Sections",
+    "untitled": "Untitled section",
+    "delete_confirm": "Are you sure you want to remove this section? This action cannot be undone.",
+    "visibility_show": "Show section",
+    "visibility_hide": "Hide section",
+    "expand": "Expand section",
+    "collapse": "Collapse section"
+  },
+  "section_types": {
+    "introduction": "Introduction",
+    "experience": "Experience",
+    "education": "Education",
+    "skills": "Skills",
+    "languages": "Languages",
+    "projects": "Projects",
+    "interests": "Interests",
+    "certifications": "Certifications",
+    "publications": "Publications",
+    "references": "References",
+    "awards": "Awards",
+    "freeform": "Custom section"
+  },
+  "fields": {
+    "content": "Content",
+    "add_item": "Add item",
+    "remove_item": "Remove item",
+    "add_category": "Add category",
+    "remove_category": "Remove category",
+    "add_skill": "Add skill",
+    "remove_skill": "Remove skill",
+    "add_interest": "Add interest item",
+    "remove_interest": "Remove interest item",
+    "organization": "Organization",
+    "role": "Role",
+    "category": "Category",
+    "start_date": "Start date",
+    "end_date": "End date",
+    "description": "Description",
+    "location": "Location",
+    "url": "URL",
+    "institution": "Institution",
+    "degree": "Degree",
+    "field_of_study": "Field of study",
+    "grade": "Grade",
+    "language": "Language",
+    "proficiency": "Proficiency",
+    "certification": "Certification",
+    "name": "Name",
+    "issuer": "Issuer",
+    "date": "Date",
+    "title": "Title",
+    "publisher": "Publisher",
+    "company": "Company",
+    "contact": "Contact",
+    "quote": "Quote",
+    "awarder": "Awarder",
+    "tags": "Tags",
+    "highlights": "Highlights",
+    "co_authors": "Co-authors",
+    "skill_name": "Skill name",
+    "category_name": "Category name",
+    "category_description": "Description",
+    "interest_item": "Interest"
+  },
+  "experience_categories": {
+    "work": "Work",
+    "volunteer": "Volunteer",
+    "military": "Military",
+    "freelance": "Freelance",
+    "other": "Other"
+  },
+  "translation": {
+    "showing_fallback": "Showing {{locale}} text",
+    "use_as_is": "Use as-is"
+  },
+  "validation": {
+    "required_field": "This field is required",
+    "missing_section_warning": "Some sections are missing required fields"
+  },
+  "drag": {
+    "instructions": "Press Space to grab, arrow keys to move, Space to drop, Escape to cancel",
+    "grabbed": "Section grabbed. Use arrow keys to move",
+    "moved": "Section moved to position {{position}}",
+    "dropped": "Section dropped",
+    "cancelled": "Reorder cancelled"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "list": {
+    "title": "Mes CV",
+    "empty": "Vous n'avez encore créé aucun CV. Commencez par en créer un nouveau.",
+    "create_new": "Nouveau CV"
+  },
+  "create": {
+    "title": "Créer un nouveau CV",
+    "name_label": "Nom du CV",
+    "name_placeholder": "ex. Ingénieur logiciel — Google",
+    "name_required": "Veuillez entrer un nom pour votre CV"
+  },
+  "item": {
+    "updated": "Modifié le {{date}}",
+    "edit": "Renommer",
+    "delete": "Supprimer"
+  },
+  "rename": {
+    "label": "Nom du CV"
+  },
+  "delete": {
+    "title": "Supprimer le CV",
+    "message": "Êtes-vous sûr de vouloir supprimer « {{name}} » ? Cette action est irréversible.",
+    "confirm": "Supprimer le CV"
+  }
+}

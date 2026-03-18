@@ -1,0 +1,13 @@
+{
+  "snapshots": {
+    "title": "Snapshots",
+    "empty": "No snapshots yet. Save a snapshot to preserve a version of your CV.",
+    "create": "Save snapshot",
+    "restore": "Restore this version",
+    "discard": "Discard snapshot"
+  },
+  "auto_save": {
+    "enabled": "Auto-save enabled",
+    "last_saved": "Last saved {{time}}"
+  }
+}
