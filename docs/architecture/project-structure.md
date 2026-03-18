@@ -35,7 +35,7 @@ cv-genius/
 │   │   ├── preview/                   # Live CV preview
 │   │   │   ├── components/
 │   │   │   │   ├── preview-panel.tsx
-│   │   │   │   ├── preview-frame.tsx  # Shadow DOM container
+│   │   │   │   ├── preview-frame.tsx  # iframe container
 │   │   │   │   ├── page-indicator.tsx
 │   │   │   │   └── zoom-controls.tsx
 │   │   │   ├── hooks/

@@ -22,6 +22,7 @@ For each predefined section type, the following tables specify which fields are 
 | `description` | Yes | |
 | `location` | No | |
 | `highlights` | No | Empty array is valid |
+| `url` | No | |
 
 ## Education Section Items
 
@@ -34,6 +35,7 @@ For each predefined section type, the following tables specify which fields are 
 | `endDate` | No | Omitted if still enrolled |
 | `description` | No | |
 | `grade` | No | |
+| `url` | No | |
 
 ## Skills Section Categories
 
@@ -99,6 +101,16 @@ For each predefined section type, the following tables specify which fields are 
 | `contact` | No | May be withheld ("available on request") |
 | `quote` | No | |
 
+## Awards Section Items
+
+| Field | Required | Notes |
+|-------|----------|-------|
+| `title` | Yes | |
+| `awarder` | Yes | |
+| `date` | Yes | |
+| `description` | No | |
+| `url` | No | |
+
 ## Freeform Section
 
 | Field | Required | Notes |
@@ -112,7 +124,6 @@ For each predefined section type, the following tables specify which fields are 
 | `id` | Yes | Auto-generated |
 | `type` | Yes | Discriminant |
 | `title` | Yes | Must be non-empty in default locale |
-| `order` | Yes | Non-negative integer |
 | `visible` | Yes | Defaults to `true` |
 
 ## Profile

@@ -1,0 +1,12 @@
+{% for item in section.items %}
+<div class="cv-project">
+  <div class="cv-project__name">{% if item.url != "" %}<a href="{{ item.url }}">{{ item.name }}</a>{% else %}{{ item.name }}{% endif %}</div>
+  {% if item.description != "" %}<p class="cv-project__description">{{ item.description }}</p>{% endif %}
+  {% if item.tags.size > 0 %}
+  <div class="cv-project__tags">{% for tag in item.tags %}<span class="cv-project__tag">{{ tag }}</span>{% endfor %}</div>
+  {% endif %}
+  {% if item.highlights.size > 0 %}
+  <ul class="cv-item__highlights">{% for h in item.highlights %}<li>{{ h }}</li>{% endfor %}</ul>
+  {% endif %}
+</div>
+{% endfor %}

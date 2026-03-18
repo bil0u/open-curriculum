@@ -2,5 +2,6 @@
   "id": "classic",
   "name": "Classic",
   "version": "0.1.0",
-  "description": "A clean, traditional CV layout"
+  "description": "A clean, professional 50/50 two-column CV layout",
+  "author": "bil0u"
 }

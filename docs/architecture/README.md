@@ -8,7 +8,7 @@ This directory contains the technical architecture specification for CV Genius, 
 |----------|-------------|
 | [Project Structure](./project-structure.md) | Feature-based folder layout, key principles |
 | [State Management](./state-management.md) | Zustand stores, command middleware, Zundo undo/redo, auto-save |
-| [Rendering Pipeline](./rendering-pipeline.md) | 7-stage pipeline: LiquidJS → Shadow DOM → Paged.js → PDF/HTML export |
+| [Rendering Pipeline](./rendering-pipeline.md) | 3-part pipeline: Core Render (LiquidJS + CSS assembly) → iframe Preview (Paged.js) → Exporters (PDF/HTML) |
 | [Command Pattern](./command-pattern.md) | Command interface, factories, debouncing, registry, Zundo integration |
 | [Coding Conventions](./coding-conventions.md) | File naming, components, hooks, imports, testing, error handling |
 

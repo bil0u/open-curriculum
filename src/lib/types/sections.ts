@@ -11,13 +11,13 @@ export type SectionType =
   | "certifications"
   | "publications"
   | "references"
+  | "awards"
   | "freeform";
 
 export interface SectionBase {
   id: EntityId;
   type: SectionType;
   title: Translatable;
-  order: number;
   visible: boolean;
 }
 
@@ -43,6 +43,7 @@ export interface ExperienceItem {
   description: Translatable;
   location?: Translatable;
   highlights: Translatable[];
+  url?: string;
 }
 
 export interface ExperienceSection extends SectionBase {
@@ -59,6 +60,7 @@ export interface EducationItem {
   endDate?: ISODateString;
   description?: Translatable;
   grade?: Translatable;
+  url?: string;
 }
 
 export interface EducationSection extends SectionBase {
@@ -162,6 +164,20 @@ export interface ReferencesSection extends SectionBase {
   items: ReferenceItem[];
 }
 
+export interface AwardItem {
+  id: EntityId;
+  title: Translatable;
+  awarder: Translatable;
+  date: ISODateString;
+  description?: Translatable;
+  url?: string;
+}
+
+export interface AwardsSection extends SectionBase {
+  type: "awards";
+  items: AwardItem[];
+}
+
 export interface FreeformSection extends SectionBase {
   type: "freeform";
   content: Translatable;
@@ -178,4 +194,5 @@ export type Section =
   | CertificationsSection
   | PublicationsSection
   | ReferencesSection
+  | AwardsSection
   | FreeformSection;

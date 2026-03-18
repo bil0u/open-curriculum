@@ -34,6 +34,8 @@ export type {
   PublicationsSection,
   ReferenceItem,
   ReferencesSection,
+  AwardItem,
+  AwardsSection,
   FreeformSection,
   Section,
 } from "./sections";

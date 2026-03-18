@@ -2,6 +2,8 @@
 
 All sections share a base shape and are distinguished by a `type` discriminant. Each predefined section type defines a typed `items` array with its own item schema.
 
+There are 12 predefined section types.
+
 ## Section Type and Base
 
 ```typescript
@@ -19,16 +21,18 @@ type SectionType =
   | 'certifications'
   | 'publications'
   | 'references'
+  | 'awards'
   | 'freeform';
 
 /**
  * Fields shared by every section regardless of type.
+ * Section order is determined by array position in CvDocument.sections,
+ * not by an explicit field.
  */
 interface SectionBase {
   id: EntityId;
   type: SectionType;
   title: Translatable;
-  order: number;
   visible: boolean;
 }
 ```
@@ -66,6 +70,7 @@ interface ExperienceItem {
   description: Translatable;
   location?: Translatable;
   highlights: Translatable[];
+  url?: string;
 }
 
 interface ExperienceSection extends SectionBase {
@@ -88,6 +93,7 @@ interface EducationItem {
   endDate?: ISODateString;
   description?: Translatable;
   grade?: Translatable;
+  url?: string;
 }
 
 interface EducationSection extends SectionBase {
@@ -239,6 +245,26 @@ interface ReferencesSection extends SectionBase {
 
 ---
 
+## Awards Section
+
+```typescript
+interface AwardItem {
+  id: EntityId;
+  title: Translatable;
+  awarder: Translatable;
+  date: ISODateString;
+  description?: Translatable;
+  url?: string;
+}
+
+interface AwardsSection extends SectionBase {
+  type: 'awards';
+  items: AwardItem[];
+}
+```
+
+---
+
 ## Freeform Section
 
 ```typescript
@@ -265,5 +291,6 @@ type Section =
   | CertificationsSection
   | PublicationsSection
   | ReferencesSection
+  | AwardsSection
   | FreeformSection;
 ```

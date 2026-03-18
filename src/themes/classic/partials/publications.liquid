@@ -1,0 +1,8 @@
+{% for item in section.items %}
+<div class="cv-pub-item">
+  <div class="cv-pub-item__title">{% if item.url != "" %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}</div>
+  <div class="cv-pub-item__publisher">{{ item.publisher }}{% if item.date != "" %} · {{ item.date | format_date: "MMM yyyy" }}{% endif %}</div>
+  {% if item.description != "" %}<p class="cv-item__description">{{ item.description }}</p>{% endif %}
+  {% if item.coAuthors.size > 0 %}<p class="cv-pub-item__coauthors">Co-authors: {{ item.coAuthors | join: ", " }}</p>{% endif %}
+</div>
+{% endfor %}

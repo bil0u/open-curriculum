@@ -1,0 +1,31 @@
+<div class="cv-page">
+  <header class="cv-header">
+    <h1 class="cv-header__name">{{ profile.name }}</h1>
+    {% if profile.title != "" %}<p class="cv-header__title">{{ profile.title }}</p>{% endif %}
+    <div class="cv-header__contact">
+      {% if profile.email != "" %}<span>{{ profile.email }}</span>{% endif %}
+      {% if profile.phone != "" %}<span>{{ profile.phone }}</span>{% endif %}
+      {% if profile.location != "" %}<span>{{ profile.location }}</span>{% endif %}
+      {% if profile.website != "" %}<span><a href="{{ profile.website }}">{{ profile.website | strip_protocol }}</a></span>{% endif %}
+      {% for link in profile.socialLinks %}<span><a href="{{ link.url }}">{{ link.label }}</a></span>{% endfor %}
+    </div>
+  </header>
+  <div class="cv-body">
+    <div class="cv-sidebar">
+      {% for section in slots.sidebar %}
+        <section class="cv-section cv-section--{{ section.type }}">
+          <h2 class="cv-section__title">{{ section.title }}</h2>
+          {% render section.type, section: section %}
+        </section>
+      {% endfor %}
+    </div>
+    <div class="cv-main">
+      {% for section in slots.main %}
+        <section class="cv-section cv-section--{{ section.type }}">
+          <h2 class="cv-section__title">{{ section.title }}</h2>
+          {% render section.type, section: section %}
+        </section>
+      {% endfor %}
+    </div>
+  </div>
+</div>

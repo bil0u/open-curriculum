@@ -1,0 +1,8 @@
+{% for cat in section.categories %}
+<div class="cv-skills-category">
+  <div class="cv-skills-category__name">{{ cat.name }}</div>
+  <div class="cv-tags">
+    {% for skill in cat.skills %}<span class="cv-tag">{{ skill.name }}</span>{% endfor %}
+  </div>
+</div>
+{% endfor %}

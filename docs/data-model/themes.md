@@ -103,6 +103,76 @@ interface LayoutSlot {
 
 ---
 
+## Theme File Organization
+
+Themes are stored as a folder with a defined structure. At runtime, the folder contents are loaded into `ThemeDefinition.templates` and related fields.
+
+```
+my-theme/
+  theme.json              # Manifest (required)
+  layout.liquid           # Default layout template (required)
+  layout.two-col.liquid   # Additional layout variant (optional)
+  partials/
+    header.liquid
+    introduction.liquid
+    experience.liquid
+    ... (one per section type)
+    _default.liquid       # Fallback for missing section types
+  styles/
+    variables.css         # CSS custom properties (--cv-* on :root)
+    base.css              # Layout, typography, structure
+  assets/                 # Optional: fonts, icons
+```
+
+### Layout Naming
+
+Additional layout variants follow the naming convention `layout.<variant>.liquid`. The variant slug becomes the `LayoutVariant.id`.
+
+### Partial Resolution
+
+Partials are named by `section.type` (e.g., `experience.liquid` for an `experience` section). The LiquidJS custom fs adapter auto-resolves partials from `ThemeDefinition.templates`. If a partial is not found, it falls back to `_default.liquid` with a console warning.
+
+### `theme.json` Manifest
+
+Minimal required fields:
+
+```json
+{
+  "id": "my-theme",
+  "name": "My Theme",
+  "version": "1.0.0"
+}
+```
+
+All other fields (`description`, `author`, `fonts`, `customizableProperties`, etc.) are optional. The manifest maps directly to `ThemeDefinition` at runtime.
+
+### Template Data Context
+
+Templates receive a locale-resolved context — translatable fields are already resolved to the active locale, so theme authors do not need to handle locale switching. All fields are nil-safe: missing strings resolve to `""` and missing arrays resolve to `[]`.
+
+### CSS Custom Properties
+
+All theme CSS custom properties use the `--cv-` prefix and are declared on `:root`:
+
+```css
+/* variables.css */
+:root {
+  --cv-primary-color: #1a1a1a;
+  --cv-accent-color: #2563eb;
+  --cv-font-family-heading: 'Inter', sans-serif;
+  --cv-font-size-base: 10pt;
+  --cv-margin-page: 20mm;
+}
+```
+
+User overrides are injected as a `:root` block appended after `variables.css`, which naturally overrides the defaults via the cascade.
+
+### Distribution
+
+Themes are distributed as `.cvtheme` zip archives for sharing between users. This is a post-MVP feature.
+
+---
+
 ## Theme Override
 
 ```typescript

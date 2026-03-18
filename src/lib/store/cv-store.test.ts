@@ -301,12 +301,13 @@ describe("addSection", () => {
     expect(section).toHaveProperty("categories", []);
   });
 
-  it("assigns the correct order based on section count", () => {
+  it("uses array position as ordering (no order field)", () => {
     useCvStore.getState().addSection("experience");
     useCvStore.getState().addSection("education");
     const sections = useCvStore.getState().document?.sections;
-    expect(sections?.[0]?.order).toBe(0);
-    expect(sections?.[1]?.order).toBe(1);
+    expect(sections).toHaveLength(2);
+    expect(sections?.[0]?.type).toBe("experience");
+    expect(sections?.[1]?.type).toBe("education");
   });
 
   it("sets visible to true by default", () => {

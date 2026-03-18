@@ -1,0 +1,6 @@
+{% for item in section.items %}
+<div class="cv-language-item">
+  <span class="cv-language-item__name">{{ item.language }}</span>
+  <span class="cv-language-item__level">{{ item.proficiency }}{% if item.certification != "" %} · {{ item.certification }}{% endif %}</span>
+</div>
+{% endfor %}

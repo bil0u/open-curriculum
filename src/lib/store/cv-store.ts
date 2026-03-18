@@ -155,7 +155,6 @@ export const useCvStore = create<CvState & CvActions>()(
             id: generateId(),
             type,
             title: {},
-            order: document.sections.length,
             visible: true,
             ...sectionDefaults,
           } as Section;

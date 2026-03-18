@@ -6,7 +6,7 @@ This directory contains the complete data model for CV Genius. All TypeScript in
 
 - **Profile** — Shared user identity (name, contacts, photo, social links). Reusable across CVs. All user-facing text fields are `Translatable`.
 - **CV Document** — Central entity. References a Profile, contains ordered typed Sections, binds to a Theme, carries metadata (page format, locales).
-- **Section** — Typed content block using a discriminated union on `type`. 11 predefined types + freeform. Each has `order` and `visible` fields.
+- **Section** — Typed content block using a discriminated union on `type`. 12 predefined types including freeform. Array position in `CvDocument.sections` defines display order.
 - **Translatable Fields** — Per-locale translations at field level via `Record<Locale, T>`. CV's `defaultLocale` is the fallback.
 - **Theme Configuration** — Base `ThemeDefinition` (templates, CSS, fonts, icons, layouts) + per-CV `ThemeOverride` (CSS custom properties, optional raw CSS).
 - **Snapshot** — Immutable versioning entry (Cmd+S). Captures full CV state + command log since previous snapshot.
@@ -19,7 +19,7 @@ This directory contains the complete data model for CV Genius. All TypeScript in
 | [Foundational Types](./foundational-types.md) | Locale, Translatable, EntityId, dates, BlobReference, CropData |
 | [Profile](./profile.md) | Profile, SocialLink, ProfileMeta |
 | [CV Document](./cv-document.md) | CvDocument, PageFormat |
-| [Sections](./sections.md) | All 11 section types, SectionBase, Section union |
+| [Sections](./sections.md) | All 12 section types, SectionBase, Section union |
 | [Themes](./themes.md) | ThemeDefinition, layouts, fonts, icons, overrides |
 | [Versioning](./versioning.md) | Command, Snapshot, WorkingState |
 | [Settings](./settings.md) | AppSettings, ShortcutBinding, PruningConfig, StoredBlob |
