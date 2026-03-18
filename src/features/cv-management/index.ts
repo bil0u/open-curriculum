@@ -1,1 +1,1 @@
-// Barrel export
+export { CvList } from "./cv-list";
