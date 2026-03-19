@@ -6,6 +6,7 @@ import type {
   Section,
   Translatable,
 } from "@/lib/types";
+import { getPageDimensionsCss } from "@/lib/utils";
 
 /**
  * The rendering context passed to LiquidJS templates.
@@ -38,11 +39,6 @@ export type ResolvedSection = {
   [key: string]: unknown;
 };
 
-const PAGE_DIMENSIONS: Record<string, { width: string; height: string }> = {
-  A4: { width: "210mm", height: "297mm" },
-  Letter: { width: "8.5in", height: "11in" },
-};
-
 /**
  * Builds the full rendering context for LiquidJS templates.
  * Resolves all Translatable fields to the active locale.
@@ -67,13 +63,7 @@ export function buildRenderContext(
     doc.sectionSlotMapping,
   );
 
-  const pageDims =
-    typeof doc.pageFormat === "string"
-      ? (PAGE_DIMENSIONS[doc.pageFormat] ?? PAGE_DIMENSIONS["A4"]!)
-      : {
-          width: `${doc.pageFormat.widthMm}mm`,
-          height: `${doc.pageFormat.heightMm}mm`,
-        };
+  const pageDims = getPageDimensionsCss(doc.pageFormat);
 
   return {
     profile: resolvedProfile,

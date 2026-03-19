@@ -311,9 +311,6 @@
 
 /* ── Print ── */
 @media print {
-  .cv-page {
-    break-inside: avoid;
-  }
   .cv-sidebar {
     background: var(--cv-bg-sidebar) !important;
     -webkit-print-color-adjust: exact;

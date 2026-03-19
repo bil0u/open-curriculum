@@ -332,10 +332,6 @@
 
 /* ── Print ── */
 @media print {
-  .cv-page {
-    break-inside: avoid;
-  }
-
   .cv-item__content {
     border-inline-start-color: var(--cv-accent-color) !important;
     -webkit-print-color-adjust: exact;

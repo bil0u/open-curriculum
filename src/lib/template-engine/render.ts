@@ -47,7 +47,7 @@ export async function renderCv(
     FORBID_ATTR: ["onerror", "onload", "onclick", "onmouseover"],
   });
 
-  const css = assembleCss(theme, doc.themeOverrides);
+  const css = assembleCss(theme, doc.themeOverrides, doc.pageFormat);
 
   return { html, css, context };
 }

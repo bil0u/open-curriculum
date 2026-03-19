@@ -1,14 +1,10 @@
-import { type MutableRefObject, useCallback, useEffect, useRef } from "react";
+import { type MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 
 import type { RenderResult } from "@/lib/template-engine";
+import { type PageDimensionsMm, getPageDimensions, PAGE_GAP_PX } from "@/lib/utils";
 
 import { useIframeRenderer } from "./use-iframe-renderer";
 import { mmToPx, usePreviewScale } from "./use-preview-scale";
-
-const PAGE_DIMENSIONS = {
-  A4: { widthMm: 210, heightMm: 297 },
-  Letter: { widthMm: 215.9, heightMm: 279.4 },
-} as const;
 
 interface PreviewPaneProps {
   renderResult: RenderResult | null;
@@ -23,6 +19,7 @@ export function PreviewPane({
 }: PreviewPaneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { iframeRef, render } = useIframeRenderer();
+  const [pageCount, setPageCount] = useState(1);
 
   const iframeCallbackRef = useCallback(
     (node: HTMLIFrameElement | null) => {
@@ -32,18 +29,26 @@ export function PreviewPane({
     [iframeRef, iframeRefOut],
   );
 
-  const dims =
-    PAGE_DIMENSIONS[pageFormat as keyof typeof PAGE_DIMENSIONS] ??
-    PAGE_DIMENSIONS.A4;
+  const dims: PageDimensionsMm = getPageDimensions(pageFormat as "A4" | "Letter");
 
   const scale = usePreviewScale(containerRef, dims.widthMm, dims.heightMm);
 
   useEffect(() => {
-    if (renderResult) render(renderResult);
+    if (!renderResult) return;
+    let cancelled = false;
+    render(renderResult).then(({ pageCount }) => {
+      if (!cancelled) setPageCount(pageCount);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [renderResult, render]);
 
   const pageWidthPx = mmToPx(dims.widthMm);
   const pageHeightPx = mmToPx(dims.heightMm);
+
+  const totalIframeHeight =
+    pageHeightPx * pageCount + PAGE_GAP_PX * (pageCount - 1);
 
   return (
     <div
@@ -64,7 +69,8 @@ export function PreviewPane({
         className="preview-page-wrapper"
         style={{
           width: pageWidthPx,
-          height: pageHeightPx,
+          minHeight: pageHeightPx,
+          height: totalIframeHeight,
           transform: `scale(${scale})`,
           transformOrigin: "top center",
           flexShrink: 0,
@@ -78,7 +84,6 @@ export function PreviewPane({
             width: "100%",
             height: "100%",
             border: "none",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
             backgroundColor: "#ffffff",
           }}
         />
