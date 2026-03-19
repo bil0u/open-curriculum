@@ -6,12 +6,14 @@ import enCvManagement from "@/locales/en/cv-management.json";
 import enEditor from "@/locales/en/editor.json";
 import enExport from "@/locales/en/export.json";
 import enPreview from "@/locales/en/preview.json";
+import enThemes from "@/locales/en/themes.json";
 import enVersioning from "@/locales/en/versioning.json";
 import frCommon from "@/locales/fr/common.json";
 import frCvManagement from "@/locales/fr/cv-management.json";
 import frEditor from "@/locales/fr/editor.json";
 import frExport from "@/locales/fr/export.json";
 import frPreview from "@/locales/fr/preview.json";
+import frThemes from "@/locales/fr/themes.json";
 import frVersioning from "@/locales/fr/versioning.json";
 
 export const SUPPORTED_LOCALES = ["en", "fr"] as const;
@@ -25,6 +27,7 @@ export const NAMESPACES = [
   "preview",
   "export",
   "versioning",
+  "themes",
 ] as const;
 
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
@@ -47,6 +50,7 @@ i18n.use(initReactI18next).init({
       preview: enPreview,
       export: enExport,
       versioning: enVersioning,
+      themes: enThemes,
     },
     fr: {
       common: frCommon,
@@ -55,6 +59,7 @@ i18n.use(initReactI18next).init({
       preview: frPreview,
       export: frExport,
       versioning: frVersioning,
+      themes: frThemes,
     },
   },
 

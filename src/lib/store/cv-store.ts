@@ -35,6 +35,9 @@ export interface CvActions {
   updateDocument: (updates: Partial<CvDocument>) => void;
   updateProfileOverride: (field: string, value: unknown) => void;
   clearProfileOverride: (field: string) => void;
+  updateThemeOverride: (property: string, value: string | null) => void;
+  switchTheme: (themeId: EntityId) => void;
+  switchLayout: (layoutId: EntityId) => void;
   addSection: (type: SectionType) => EntityId | undefined;
   removeSection: (sectionId: EntityId) => void;
   reorderSections: (fromIndex: number, toIndex: number) => void;
@@ -189,6 +192,50 @@ export const useCvStore = create<CvState & CvActions>()(
                 [field]: value,
               },
             }),
+          });
+        },
+
+        updateThemeOverride: (property, value) => {
+          const { document } = get();
+          if (!document) return;
+          const current = document.themeOverrides?.simpleOverrides ?? {};
+          if (value === null) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { [property]: _, ...rest } = current;
+            const themeOverrides =
+              Object.keys(rest).length > 0
+                ? { ...document.themeOverrides, simpleOverrides: rest }
+                : undefined;
+            set({ document: withTimestamp(document, { themeOverrides }) });
+          } else {
+            set({
+              document: withTimestamp(document, {
+                themeOverrides: {
+                  ...document.themeOverrides,
+                  simpleOverrides: { ...current, [property]: value },
+                },
+              }),
+            });
+          }
+        },
+
+        switchTheme: (themeId) => {
+          const { document } = get();
+          if (!document) return;
+          set({
+            document: withTimestamp(document, {
+              themeId,
+              themeOverrides: undefined,
+              sectionSlotMapping: undefined,
+            }),
+          });
+        },
+
+        switchLayout: (layoutId) => {
+          const { document } = get();
+          if (!document) return;
+          set({
+            document: withTimestamp(document, { selectedLayoutId: layoutId }),
           });
         },
 

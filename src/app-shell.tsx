@@ -1,7 +1,7 @@
 import { CvList } from "@/features/cv-management";
 import { EditorPanel } from "@/features/editor";
 import { PreviewPanel } from "@/features/preview";
-import { ThemePicker } from "@/features/themes";
+import { ThemeEditor } from "@/features/themes";
 import { VersionsPanel } from "@/features/versioning";
 import { useTranslation } from "@/lib/i18n";
 import { useGlobalKeyboardShortcuts } from "@/lib/keyboard";
@@ -49,7 +49,7 @@ function Sidebar() {
       </nav>
       <div className="flex-1 overflow-y-auto">
         {activePanel === "editor" && <CvList />}
-        {activePanel === "theme" && <ThemePicker />}
+        {activePanel === "theme" && <ThemeEditor />}
         {activePanel === "versions" && document !== null && <VersionsPanel />}
       </div>
     </aside>

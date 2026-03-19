@@ -1,0 +1,25 @@
+{
+  "editor": {
+    "title": "Theme",
+    "customization": "Customization",
+    "reset_property": "Reset to default",
+    "layout": "Layout",
+    "slot_mapping": "Section placement",
+    "slot_mapping_hint": "Assign sections to layout zones",
+    "font_family": {
+      "label": "Font"
+    }
+  },
+  "slot_change_confirm": {
+    "title": "Some sections will become hidden",
+    "description": "Sections assigned to slots that don't exist in the new layout will no longer appear in the preview. You can reassign them after switching.",
+    "confirm": "Switch anyway",
+    "cancel": "Cancel"
+  },
+  "slot_names": {
+    "main": "Main",
+    "sidebar": "Sidebar",
+    "header": "Header",
+    "footer": "Footer"
+  }
+}

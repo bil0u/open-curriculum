@@ -22,6 +22,12 @@ export function assembleCss(
   const parts: string[] = [CSS_RESET];
 
   parts.push(buildFontFaceRules(theme.fonts));
+
+  // Trust boundary: only bundled themes are allowed; validate source URLs before accepting user-supplied themes
+  if (theme.iconLibrary?.type === "cdn") {
+    parts.push(`@import url('${theme.iconLibrary.source}');`);
+  }
+
   parts.push(theme.css);
 
   if (overrides?.simpleOverrides) {

@@ -1,72 +1,81 @@
+import { useState } from "react";
+
 import { useTranslation } from "@/lib/i18n";
 import { useCvStore } from "@/lib/store";
 import { BUNDLED_THEMES } from "@/lib/theme-registry";
-import type { EntityId } from "@/lib/types";
+import { ConfirmDialog } from "@/lib/ui";
 
-const THEME_ACCENT_COLORS: Record<EntityId, string> = Object.fromEntries(
-  BUNDLED_THEMES.map((theme) => [
-    theme.id,
-    theme.customizableProperties.find((p) => p.property === "--cv-accent-color")
-      ?.defaultValue ?? "#6b7280",
-  ]),
-);
+import { hasSlotConflict } from "./slot-utils";
 
 export function ThemePicker() {
-  const { t } = useTranslation("preview");
+  const { t } = useTranslation("themes");
   const document = useCvStore((s) => s.document);
-  const updateDocument = useCvStore((s) => s.updateDocument);
+  const switchTheme = useCvStore((s) => s.switchTheme);
+  const [pendingThemeId, setPendingThemeId] = useState<string | null>(null);
 
   if (!document) return null;
 
-  return (
-    <div className="p-3">
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-        {t("theme_picker.title")}
-      </h3>
-      <div className="flex flex-col gap-2">
-        {BUNDLED_THEMES.map((theme) => {
-          const isActive = document.themeId === theme.id;
-          const accent = THEME_ACCENT_COLORS[theme.id] ?? "#6b7280";
+  function handleThemeSelect(themeId: string) {
+    if (themeId === document?.themeId) return;
+    const newTheme = BUNDLED_THEMES.find((th) => th.id === themeId);
+    const newDefaultLayout = newTheme?.layouts.find(
+      (l) => l.id === newTheme.defaultLayoutId,
+    );
+    const newSlotNames = new Set(newDefaultLayout?.slots.map((s) => s.name) ?? []);
+    if (hasSlotConflict(document?.sectionSlotMapping, newSlotNames)) {
+      setPendingThemeId(themeId);
+    } else {
+      switchTheme(themeId);
+    }
+  }
 
+  function handleConfirm() {
+    if (!pendingThemeId) return;
+    switchTheme(pendingThemeId);
+    setPendingThemeId(null);
+  }
+
+  return (
+    <div>
+      <div
+        className="grid grid-cols-2 gap-2"
+        role="radiogroup"
+        aria-label={t("editor.title")}
+      >
+        {BUNDLED_THEMES.map((theme) => {
+          const isSelected = theme.id === document.themeId;
           return (
             <button
               key={theme.id}
               type="button"
-              onClick={() => {
-                if (!isActive) {
-                  updateDocument({ themeId: theme.id });
-                }
-              }}
-              aria-pressed={isActive}
+              role="radio"
+              aria-checked={isSelected}
+              onClick={() => handleThemeSelect(theme.id)}
               className={[
-                "flex items-center gap-3 rounded-md border px-3 py-2 text-start transition-colors",
-                isActive
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50",
+                "rounded border p-3 text-start text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600",
+                isSelected
+                  ? "border-blue-600 bg-blue-50 text-blue-900"
+                  : "border-gray-200 bg-white text-gray-900 hover:border-gray-300 hover:bg-gray-50",
               ].join(" ")}
             >
-              <span
-                className="h-4 w-4 shrink-0 rounded-full"
-                style={{ backgroundColor: accent }}
-                aria-hidden="true"
-              />
-              <div className="min-w-0 flex-1">
-                <span
-                  className={[
-                    "block text-sm font-medium",
-                    isActive ? "text-blue-700" : "text-gray-900",
-                  ].join(" ")}
-                >
-                  {theme.name}
-                </span>
-                <span className="block truncate text-xs text-gray-500">
-                  {theme.description}
-                </span>
-              </div>
+              <span className="block font-medium">{theme.name}</span>
+              <span className="mt-0.5 block text-xs text-gray-500">
+                {theme.description}
+              </span>
             </button>
           );
         })}
       </div>
+
+      <ConfirmDialog
+        isOpen={pendingThemeId !== null}
+        title={t("slot_change_confirm.title")}
+        message={t("slot_change_confirm.description")}
+        confirmLabel={t("slot_change_confirm.confirm")}
+        cancelLabel={t("slot_change_confirm.cancel")}
+        onConfirm={handleConfirm}
+        onCancel={() => setPendingThemeId(null)}
+      />
     </div>
   );
 }

@@ -1,0 +1,25 @@
+{
+  "editor": {
+    "title": "Thème",
+    "customization": "Personnalisation",
+    "reset_property": "Réinitialiser",
+    "layout": "Mise en page",
+    "slot_mapping": "Placement des sections",
+    "slot_mapping_hint": "Assignez les sections aux zones de mise en page",
+    "font_family": {
+      "label": "Police"
+    }
+  },
+  "slot_change_confirm": {
+    "title": "Certaines sections seront masquées",
+    "description": "Les sections assignées à des zones qui n'existent pas dans la nouvelle mise en page ne seront plus visibles dans l'aperçu. Vous pourrez les réassigner après le changement.",
+    "confirm": "Changer quand même",
+    "cancel": "Annuler"
+  },
+  "slot_names": {
+    "main": "Principal",
+    "sidebar": "Barre latérale",
+    "header": "En-tête",
+    "footer": "Pied de page"
+  }
+}
