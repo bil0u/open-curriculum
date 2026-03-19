@@ -48,6 +48,8 @@ export interface ThemeDefinition {
   iconLibrary?: ThemeIconLibrary;
   fonts: ThemeFont[];
   customizableProperties: ThemeCustomizableProperty[];
+  /** Section types the theme was designed to showcase. Used for non-blocking "missing section" hints. */
+  recommendedSectionTypes?: SectionType[];
 }
 
 /**

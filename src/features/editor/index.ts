@@ -4,3 +4,4 @@ export { SectionList } from "./components/section-list";
 export { TranslatableField } from "./components/translatable-field";
 export { TranslatableTagInput } from "./components/translatable-tag-input";
 export { useSectionValidation } from "./hooks/use-section-validation";
+export { useThemeWarnings } from "./hooks/use-theme-warnings";

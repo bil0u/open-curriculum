@@ -45,6 +45,11 @@ export const minimalTheme: ThemeDefinition = {
       styles: ["normal", "italic"],
     },
   ],
+  recommendedSectionTypes: [
+    "introduction",
+    "experience",
+    "education",
+  ],
   customizableProperties: [
     {
       property: "--cv-accent-color",
