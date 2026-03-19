@@ -92,10 +92,13 @@
     "missing_section_warning": "Some sections are missing required fields"
   },
   "drag": {
-    "instructions": "Press Space to grab, arrow keys to move, Space to drop, Escape to cancel",
-    "grabbed": "Section grabbed. Use arrow keys to move",
-    "moved": "Section moved to position {{position}}",
-    "dropped": "Section dropped",
+    "handle": "Reorder",
+    "section_grabbed": "Grabbed section. Use arrow keys to move, Space to drop, Escape to cancel",
+    "section_moved": "Section moved to position {{position}} of {{total}}",
+    "section_dropped": "Section dropped at position {{position}} of {{total}}",
+    "item_grabbed": "Grabbed item. Use arrow keys to move, Space to drop, Escape to cancel",
+    "item_moved": "Item moved to position {{position}} of {{total}}",
+    "item_dropped": "Item dropped at position {{position}} of {{total}}",
     "cancelled": "Reorder cancelled"
   }
 }

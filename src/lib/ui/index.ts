@@ -22,11 +22,14 @@ export type { IconButtonProps } from "./icon-button";
 export { TagInput } from "./tag-input";
 export type { TagInputProps } from "./tag-input";
 
+export { DragHandle } from "./drag-handle";
+
 export { Kbd } from "./kbd";
 export type { KbdProps } from "./kbd";
 
 export {
   ChevronDownIcon,
+  GripVerticalIcon,
   TrashIcon,
   EyeIcon,
   EyeOffIcon,

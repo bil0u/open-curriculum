@@ -92,10 +92,13 @@
     "missing_section_warning": "Certaines sections ont des champs obligatoires manquants"
   },
   "drag": {
-    "instructions": "Appuyez sur Espace pour saisir, les flèches pour déplacer, Espace pour déposer, Échap pour annuler",
-    "grabbed": "Section saisie. Utilisez les touches fléchées pour déplacer",
-    "moved": "Section déplacée à la position {{position}}",
-    "dropped": "Section déposée",
+    "handle": "Réorganiser",
+    "section_grabbed": "Section saisie. Utilisez les flèches pour déplacer, Espace pour déposer, Échap pour annuler",
+    "section_moved": "Section déplacée à la position {{position}} sur {{total}}",
+    "section_dropped": "Section déposée à la position {{position}} sur {{total}}",
+    "item_grabbed": "Élément saisi. Utilisez les flèches pour déplacer, Espace pour déposer, Échap pour annuler",
+    "item_moved": "Élément déplacé à la position {{position}} sur {{total}}",
+    "item_dropped": "Élément déposé à la position {{position}} sur {{total}}",
     "cancelled": "Réorganisation annulée"
   }
 }
