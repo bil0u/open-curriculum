@@ -1,10 +1,28 @@
 import { useState } from "react";
 
+import {
+  Accessibility,
+  type DragEndEvent,
+  type DragStartEvent,
+} from "@dnd-kit/dom";
+import { isSortable } from "@dnd-kit/dom/sortable";
+import { DragDropProvider } from "@dnd-kit/react";
+import { useSortable } from "@dnd-kit/react/sortable";
+
 import { useTranslation } from "@/lib/i18n";
 import { useCvStore } from "@/lib/store";
 import type { EntityId, Section, SectionType, Translatable } from "@/lib/types";
-import { Button, ChevronDownIcon, ConfirmDialog, IconButton, TrashIcon } from "@/lib/ui";
+import {
+  Button,
+  ChevronDownIcon,
+  ConfirmDialog,
+  DragHandle,
+  IconButton,
+  TrashIcon,
+} from "@/lib/ui";
 import { generateId } from "@/lib/utils";
+
+import { resolveDragReorder } from "../utils/resolve-drag-reorder";
 
 import { ItemForm } from "./item-form";
 
@@ -64,6 +82,82 @@ function buildDefaultItem(sectionType: SectionType): ItemRecord {
   }
 }
 
+interface SortableItemRowProps {
+  item: ItemRecord;
+  index: number;
+  sectionType: SectionType;
+  sectionId: EntityId;
+  locale: string;
+  isExpanded: boolean;
+  onToggleExpand: () => void;
+  onRequestRemove: () => void;
+}
+
+function SortableItemRow({
+  item,
+  index,
+  sectionType,
+  sectionId,
+  locale,
+  isExpanded,
+  onToggleExpand,
+  onRequestRemove,
+}: SortableItemRowProps) {
+  const { t } = useTranslation("editor");
+  const updateSectionItem = useCvStore((s) => s.updateSectionItem);
+  const { ref, handleRef, isDragSource } = useSortable({
+    id: item.id,
+    index,
+  });
+
+  const summary = getItemSummary(sectionType, item, locale);
+
+  return (
+    <div
+      ref={ref}
+      role="listitem"
+      className={["border border-gray-200 rounded-md", isDragSource ? "opacity-50" : ""]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <div className="flex items-center gap-2 px-3 py-2">
+        <DragHandle ref={handleRef} aria-label={t("drag.handle")} />
+        <span className="flex-1 truncate text-sm text-gray-700">
+          {summary || (
+            <span className="text-gray-400 italic">{t("sections.untitled")}</span>
+          )}
+        </span>
+        <IconButton
+          aria-label={t("fields.remove_item")}
+          variant="danger"
+          size="sm"
+          onPress={onRequestRemove}
+        >
+          <TrashIcon />
+        </IconButton>
+        <IconButton
+          aria-label={isExpanded ? t("sections.collapse") : t("sections.expand")}
+          size="sm"
+          onPress={onToggleExpand}
+        >
+          <ChevronDownIcon rotated={isExpanded} />
+        </IconButton>
+      </div>
+      {isExpanded && (
+        <div className="border-t border-gray-100 px-3 pb-3 pt-2">
+          <ItemForm
+            sectionType={sectionType}
+            item={item}
+            onChange={(updates) =>
+              updateSectionItem(sectionId, item.id, updates)
+            }
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface ItemListProps {
   section: Section;
 }
@@ -73,7 +167,7 @@ export function ItemList({ section }: ItemListProps) {
   const { t: tCommon } = useTranslation("common");
   const addSectionItem = useCvStore((s) => s.addSectionItem);
   const removeSectionItem = useCvStore((s) => s.removeSectionItem);
-  const updateSectionItem = useCvStore((s) => s.updateSectionItem);
+  const reorderSectionItems = useCvStore((s) => s.reorderSectionItems);
   const activeLocale = useCvStore((s) => s.activeLocale);
 
   const [expandedItemId, setExpandedItemId] = useState<EntityId | null>(null);
@@ -82,53 +176,57 @@ export function ItemList({ section }: ItemListProps) {
   if (!("items" in section)) return null;
 
   const items = (section as unknown as { items: ItemRecord[] }).items;
+  const itemIds = items.map((item) => item.id);
 
   return (
     <div className="flex flex-col gap-2">
-      {items.map((item) => {
-        const isExpanded = item.id === expandedItemId;
-        const summary = getItemSummary(section.type, item, activeLocale);
-
-        return (
-          <div key={item.id} className="border border-gray-200 rounded-md">
-            <div className="flex items-center gap-2 px-3 py-2">
-              <span className="flex-1 truncate text-sm text-gray-700">
-                {summary || (
-                  <span className="text-gray-400 italic">{t("sections.untitled")}</span>
-                )}
-              </span>
-              <IconButton
-                aria-label={t("fields.remove_item")}
-                variant="danger"
-                size="sm"
-                onPress={() => setConfirmRemoveId(item.id)}
-              >
-                <TrashIcon />
-              </IconButton>
-              <IconButton
-                aria-label={isExpanded ? t("sections.collapse") : t("sections.expand")}
-                size="sm"
-                onPress={() =>
-                  setExpandedItemId(isExpanded ? null : item.id)
+      <DragDropProvider
+        onDragEnd={(event) => {
+          const result = resolveDragReorder(itemIds, event);
+          if (result) reorderSectionItems(section.id, result.oldIndex, result.newIndex);
+        }}
+        plugins={(defaults) => [
+          ...defaults,
+          Accessibility.configure({
+            announcements: {
+              dragstart(event: Parameters<DragStartEvent>[0]) {
+                if (!event.operation.source) return;
+                return t("drag.item_grabbed");
+              },
+              dragend(event: Parameters<DragEndEvent>[0]) {
+                const { source } = event.operation;
+                if (!source) return;
+                if (event.canceled) return t("drag.cancelled");
+                if (isSortable(source)) {
+                  return t("drag.item_dropped", {
+                    position: source.index + 1,
+                    total: items.length,
+                  });
                 }
-              >
-                <ChevronDownIcon rotated={isExpanded} />
-              </IconButton>
-            </div>
-            {isExpanded && (
-              <div className="border-t border-gray-100 px-3 pb-3 pt-2">
-                <ItemForm
-                  sectionType={section.type}
-                  item={item}
-                  onChange={(updates) =>
-                    updateSectionItem(section.id, item.id, updates)
-                  }
-                />
-              </div>
-            )}
-          </div>
-        );
-      })}
+                return undefined;
+              },
+            },
+          }),
+        ]}
+      >
+        <div role="list">
+          {items.map((item, index) => (
+            <SortableItemRow
+              key={item.id}
+              item={item}
+              index={index}
+              sectionType={section.type}
+              sectionId={section.id}
+              locale={activeLocale}
+              isExpanded={item.id === expandedItemId}
+              onToggleExpand={() =>
+                setExpandedItemId(item.id === expandedItemId ? null : item.id)
+              }
+              onRequestRemove={() => setConfirmRemoveId(item.id)}
+            />
+          ))}
+        </div>
+      </DragDropProvider>
 
       <Button
         variant="secondary"
