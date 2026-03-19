@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 
 import type { CvDocument, Profile, ThemeDefinition } from "@/lib/types";
 
-import { renderCv } from "./render";
 import { buildRenderContext } from "./context";
+import { renderCv } from "./render";
 
 const mockProfile: Profile = {
   id: "profile-1",

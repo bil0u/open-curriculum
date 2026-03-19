@@ -1,6 +1,6 @@
+import DOMPurify from "dompurify";
 import type { Liquid } from "liquidjs";
 import { marked } from "marked";
-import DOMPurify from "dompurify";
 
 /**
  * Registers all CV-specific custom filters on a LiquidJS engine.

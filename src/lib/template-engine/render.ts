@@ -2,8 +2,8 @@ import DOMPurify from "dompurify";
 
 import type { CvDocument, Locale, Profile, ThemeDefinition } from "@/lib/types";
 
-import { assembleCss } from "./css";
 import { buildRenderContext, type CvRenderContext } from "./context";
+import { assembleCss } from "./css";
 import { createLiquidEngine } from "./engine";
 import { registerFilters } from "./filters";
 
