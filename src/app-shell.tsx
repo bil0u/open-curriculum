@@ -2,13 +2,16 @@ import { CvList } from "@/features/cv-management";
 import { EditorPanel } from "@/features/editor";
 import { PreviewPanel } from "@/features/preview";
 import { ThemePicker } from "@/features/themes";
+import { VersionsPanel } from "@/features/versioning";
 import { useTranslation } from "@/lib/i18n";
+import { useGlobalKeyboardShortcuts } from "@/lib/keyboard";
 import { useCvStore, useUiStore } from "@/lib/store";
 
 function Sidebar() {
   const { t } = useTranslation("common");
   const activePanel = useUiStore((s) => s.activePanel);
   const setActivePanel = useUiStore((s) => s.setActivePanel);
+  const document = useCvStore((s) => s.document);
 
   const tabs = [
     { id: "editor", label: t("nav.editor") },
@@ -47,6 +50,7 @@ function Sidebar() {
       <div className="flex-1 overflow-y-auto">
         {activePanel === "editor" && <CvList />}
         {activePanel === "theme" && <ThemePicker />}
+        {activePanel === "versions" && document !== null && <VersionsPanel />}
       </div>
     </aside>
   );
@@ -68,6 +72,8 @@ function EmptyState() {
 export function AppShell() {
   const { t } = useTranslation("common");
   const document = useCvStore((s) => s.document);
+
+  useGlobalKeyboardShortcuts();
 
   return (
     <div className="flex h-screen overflow-hidden">

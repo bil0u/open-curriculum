@@ -109,5 +109,12 @@
     "item_moved": "Élément déplacé à la position {{position}} sur {{total}}",
     "item_dropped": "Élément déposé à la position {{position}} sur {{total}}",
     "cancelled": "Réorganisation annulée"
+  },
+  "toolbar": {
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "save_snapshot": "Sauvegarder",
+    "last_saved": "Enregistré {{time}}",
+    "no_saves_yet": "Pas encore enregistré"
   }
 }

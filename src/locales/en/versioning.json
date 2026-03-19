@@ -1,13 +1,20 @@
 {
   "snapshots": {
     "title": "Snapshots",
-    "empty": "No snapshots yet. Save a snapshot to preserve a version of your CV.",
-    "create": "Save snapshot",
-    "restore": "Restore this version",
-    "discard": "Discard snapshot"
+    "empty": "No snapshots yet. Press Cmd+S to save a snapshot.",
+    "save": "Save snapshot",
+    "saved_at": "Saved {{datetime}}",
+    "relative_time": "{{time}}",
+    "restore": "Restore",
+    "restore_confirm_title": "Restore snapshot?",
+    "restore_confirm_message": "Your current unsaved changes will be lost.",
+    "discard_changes": "Discard changes",
+    "discard_confirm_title": "Discard unsaved changes?",
+    "discard_confirm_message": "This will revert to your last saved snapshot. Unsaved edits will be lost.",
+    "no_snapshot_to_restore": "No snapshot to discard to."
   },
   "auto_save": {
-    "enabled": "Auto-save enabled",
-    "last_saved": "Last saved {{time}}"
+    "last_saved": "Auto-saved {{time}}",
+    "no_saves_yet": "Not yet saved"
   }
 }

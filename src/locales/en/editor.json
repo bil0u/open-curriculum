@@ -109,5 +109,12 @@
     "item_moved": "Item moved to position {{position}} of {{total}}",
     "item_dropped": "Item dropped at position {{position}} of {{total}}",
     "cancelled": "Reorder cancelled"
+  },
+  "toolbar": {
+    "undo": "Undo",
+    "redo": "Redo",
+    "save_snapshot": "Save snapshot",
+    "last_saved": "Saved {{time}}",
+    "no_saves_yet": "Not saved yet"
   }
 }

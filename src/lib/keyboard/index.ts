@@ -1,1 +1,1 @@
-// Barrel export
+export { useGlobalKeyboardShortcuts } from "./use-keyboard-shortcuts";

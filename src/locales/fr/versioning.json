@@ -1,13 +1,20 @@
 {
   "snapshots": {
     "title": "Instantanés",
-    "empty": "Aucun instantané pour l'instant. Enregistrez un instantané pour conserver une version de votre CV.",
-    "create": "Enregistrer un instantané",
-    "restore": "Restaurer cette version",
-    "discard": "Supprimer l'instantané"
+    "empty": "Aucun instantané. Appuyez sur Cmd+S pour enregistrer.",
+    "save": "Enregistrer",
+    "saved_at": "Enregistré le {{datetime}}",
+    "relative_time": "{{time}}",
+    "restore": "Restaurer",
+    "restore_confirm_title": "Restaurer cet instantané ?",
+    "restore_confirm_message": "Vos modifications non enregistrées seront perdues.",
+    "discard_changes": "Annuler les modifications",
+    "discard_confirm_title": "Annuler les modifications non enregistrées ?",
+    "discard_confirm_message": "Cela rétablira votre dernier instantané enregistré. Les modifications non enregistrées seront perdues.",
+    "no_snapshot_to_restore": "Aucun instantané vers lequel revenir."
   },
   "auto_save": {
-    "enabled": "Sauvegarde automatique activée",
-    "last_saved": "Dernière sauvegarde {{time}}"
+    "last_saved": "Sauvegardé auto. {{time}}",
+    "no_saves_yet": "Pas encore enregistré"
   }
 }

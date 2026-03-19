@@ -55,6 +55,9 @@ export interface CvActions {
     toIndex: number,
   ) => void;
   setActiveLocale: (locale: Locale) => void;
+  createSnapshot: () => Promise<void>;
+  restoreSnapshot: (snapshotId: EntityId) => Promise<void>;
+  discardChanges: () => Promise<void>;
 }
 
 function withTimestamp(
@@ -329,6 +332,48 @@ export const useCvStore = create<CvState & CvActions>()(
         },
 
         setActiveLocale: (locale) => set({ activeLocale: locale }),
+
+        createSnapshot: async () => {
+          const { activeCvId, document } = get();
+          if (!activeCvId || !document) return;
+          const snapshot = {
+            id: generateId(),
+            cvId: activeCvId,
+            state: document,
+            commandLog: [],
+            timestamp: generateISODateTime(),
+          };
+          await db.snapshots.put(snapshot);
+          await db.cvs.put(document);
+        },
+
+        restoreSnapshot: async (snapshotId) => {
+          const { activeCvId } = get();
+          if (!activeCvId) return;
+          const snapshot = await db.snapshots.get(snapshotId);
+          if (!snapshot || snapshot.cvId !== activeCvId) return;
+          useCvStore.temporal.getState().clear();
+          set({
+            document: snapshot.state,
+            activeLocale: snapshot.state.defaultLocale,
+          });
+        },
+
+        discardChanges: async () => {
+          const { activeCvId } = get();
+          if (!activeCvId) return;
+          const snapshots = await db.snapshots
+            .where("cvId")
+            .equals(activeCvId)
+            .sortBy("timestamp");
+          const lastSnapshot = snapshots[snapshots.length - 1];
+          if (!lastSnapshot) return;
+          useCvStore.temporal.getState().clear();
+          set({
+            document: lastSnapshot.state,
+            activeLocale: lastSnapshot.state.defaultLocale,
+          });
+        },
       }),
       {
         limit: 100,
