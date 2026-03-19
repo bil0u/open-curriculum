@@ -29,6 +29,11 @@ export function SectionForm({ section }: SectionFormProps) {
         }
         multiline
         isRequired
+        description={
+          section.type === "freeform"
+            ? t("freeform.markdown_hint")
+            : undefined
+        }
       />
     );
   }

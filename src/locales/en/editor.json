@@ -87,6 +87,15 @@
     "showing_fallback": "Showing {{locale}} text",
     "use_as_is": "Use as-is"
   },
+  "freeform": {
+    "markdown_hint": "Supports Markdown formatting. Headings are shifted down (h1 renders as h3) to preserve document structure."
+  },
+  "theme_warnings": {
+    "title": "Theme recommendations",
+    "missing_section": "This theme works best with a \"{{sectionType}}\" section.",
+    "hidden_section": "You have a \"{{sectionType}}\" section but it's currently hidden.",
+    "show_section": "Show"
+  },
   "validation": {
     "required_field": "This field is required",
     "missing_section_warning": "Some sections are missing required fields"

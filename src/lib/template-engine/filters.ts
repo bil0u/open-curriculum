@@ -1,6 +1,21 @@
 import DOMPurify from "dompurify";
 import type { Liquid } from "liquidjs";
-import { marked } from "marked";
+import { Marked } from "marked";
+
+/**
+ * Marked instance with heading-level shift.
+ * h1→h3, h2→h4, etc. — h1/h2 are reserved for CV document structure
+ * (profile name and section titles), so user content starts at h3.
+ */
+const cvMarked = new Marked({
+  renderer: {
+    heading({ tokens, depth }) {
+      const text = this.parser.parseInline(tokens);
+      const shifted = Math.min(depth + 2, 6);
+      return `<h${shifted}>${text}</h${shifted}>\n`;
+    },
+  },
+});
 
 /**
  * Registers all CV-specific custom filters on a LiquidJS engine.
@@ -57,7 +72,7 @@ function renderMarkdown(value: unknown): string {
   if (!value || (typeof value === "string" && value.trim() === "")) {
     return "";
   }
-  const html = marked.parse(String(value), { async: false }) as string;
+  const html = cvMarked.parse(String(value), { async: false }) as string;
   return DOMPurify.sanitize(html, {
     FORBID_TAGS: ["script", "iframe", "object", "embed", "form", "style"],
     FORBID_ATTR: ["onerror", "onload", "onclick", "onmouseover"],

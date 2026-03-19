@@ -87,6 +87,15 @@
     "showing_fallback": "Affichage du texte en {{locale}}",
     "use_as_is": "Utiliser tel quel"
   },
+  "freeform": {
+    "markdown_hint": "Prend en charge le format Markdown. Les titres sont décalés (h1 devient h3) pour préserver la structure du document."
+  },
+  "theme_warnings": {
+    "title": "Recommandations du thème",
+    "missing_section": "Ce thème fonctionne mieux avec une section « {{sectionType}} ».",
+    "hidden_section": "Vous avez une section « {{sectionType}} » mais elle est actuellement masquée.",
+    "show_section": "Afficher"
+  },
   "validation": {
     "required_field": "Ce champ est requis",
     "missing_section_warning": "Certaines sections ont des champs obligatoires manquants"
