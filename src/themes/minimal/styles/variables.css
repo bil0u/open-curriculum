@@ -1,0 +1,13 @@
+:root {
+  --cv-accent-color: #059669;
+  --cv-text-color: #1e293b;
+  --cv-text-muted: #64748b;
+  --cv-border-color: #e2e8f0;
+  --cv-font-family: "Georgia", serif;
+  --cv-font-size: 10pt;
+  --cv-line-height: 1.5;
+  --cv-spacing-xs: 0.2em;
+  --cv-spacing-sm: 0.5em;
+  --cv-spacing-md: 0.9em;
+  --cv-spacing-lg: 1.4em;
+}

@@ -1,0 +1,6 @@
+{% for cat in section.categories %}
+<div class="cv-interests-category">
+  <span class="cv-interests-category__name">{{ cat.name }}</span>
+  <span class="cv-interests-category__items">{{ cat.items | join: ", " }}</span>
+</div>
+{% endfor %}

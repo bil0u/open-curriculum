@@ -1,0 +1,6 @@
+{% for cat in section.categories %}
+<div class="cv-skills-category">
+  <span class="cv-skills-category__name">{{ cat.name }}:</span>
+  <span class="cv-skills-category__list">{% for skill in cat.skills %}{{ skill.name }}{% unless forloop.last %}, {% endunless %}{% endfor %}</span>
+</div>
+{% endfor %}

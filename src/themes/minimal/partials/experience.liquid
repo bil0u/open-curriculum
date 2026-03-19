@@ -1,0 +1,13 @@
+{% for item in section.items %}
+<div class="cv-item cv-item--timeline">
+  <div class="cv-item__date">{{ item.startDate | format_date: "MMM yyyy" }} – {{ item.endDate | format_date: "MMM yyyy", "Present" }}</div>
+  <div class="cv-item__content">
+    <div class="cv-item__role">{{ item.role }}</div>
+    <div class="cv-item__org">{{ item.organization }}{% if item.location != "" %}, {{ item.location }}{% endif %}</div>
+    {% if item.description != "" %}<p class="cv-item__description">{{ item.description }}</p>{% endif %}
+    {% if item.highlights.size > 0 %}
+    <ul class="cv-item__highlights">{% for h in item.highlights %}<li>{{ h }}</li>{% endfor %}</ul>
+    {% endif %}
+  </div>
+</div>
+{% endfor %}

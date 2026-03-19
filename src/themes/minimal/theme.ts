@@ -17,11 +17,11 @@ import skillsPartial from "./partials/skills.liquid?raw";
 import baseCss from "./styles/base.css?raw";
 import variablesCss from "./styles/variables.css?raw";
 
-export const classicTheme: ThemeDefinition = {
-  id: "classic",
-  name: "Classic",
-  description: "A clean, professional 50/50 two-column CV layout",
-  author: "bil0u",
+export const minimalTheme: ThemeDefinition = {
+  id: "minimal",
+  name: "Minimal",
+  description: "A clean, single-column CV layout with a timeline-inspired design",
+  author: "CV Genius",
   version: "0.1.0",
   layouts: [
     {
@@ -29,11 +29,6 @@ export const classicTheme: ThemeDefinition = {
       name: "Default",
       template: "layout",
       slots: [
-        {
-          name: "sidebar",
-          label: "Sidebar",
-          acceptedSectionTypes: [],
-        },
         {
           name: "main",
           label: "Main",
@@ -45,10 +40,9 @@ export const classicTheme: ThemeDefinition = {
   defaultLayoutId: "default",
   fonts: [
     {
-      family: "Inter",
-      weights: [400, 500, 600, 700],
-      styles: ["normal"],
-      url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+      family: "Georgia",
+      weights: [400, 700],
+      styles: ["normal", "italic"],
     },
   ],
   customizableProperties: [
@@ -56,20 +50,20 @@ export const classicTheme: ThemeDefinition = {
       property: "--cv-accent-color",
       label: "Accent Color",
       inputType: "color",
-      defaultValue: "#2563eb",
+      defaultValue: "#059669",
     },
     {
       property: "--cv-font-family",
       label: "Font",
       inputType: "font-family",
-      defaultValue: "'Inter', sans-serif",
+      defaultValue: '"Georgia", serif',
     },
     {
       property: "--cv-font-size",
       label: "Base Font Size",
       inputType: "select",
-      defaultValue: "9.5pt",
-      options: ["8pt", "9pt", "9.5pt", "10pt", "11pt"],
+      defaultValue: "10pt",
+      options: ["9pt", "10pt", "11pt", "12pt"],
     },
   ],
   css: `${variablesCss}\n${baseCss}`,

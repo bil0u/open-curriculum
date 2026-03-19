@@ -1,0 +1,6 @@
+{% for item in section.items %}
+<div class="cv-cert-item">
+  <div class="cv-cert-item__name">{% if item.url != "" %}<a href="{{ item.url }}">{{ item.name }}</a>{% else %}{{ item.name }}{% endif %}</div>
+  <div class="cv-cert-item__issuer">{{ item.issuer }}{% if item.date != "" %} · {{ item.date | format_date: "MMM yyyy" }}{% endif %}</div>
+</div>
+{% endfor %}

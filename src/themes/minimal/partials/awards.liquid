@@ -1,0 +1,7 @@
+{% for item in section.items %}
+<div class="cv-award-item">
+  <div class="cv-award-item__title">{{ item.title }}</div>
+  <div class="cv-award-item__awarder">{{ item.awarder }}{% if item.date != "" %} · {{ item.date | format_date: "MMM yyyy" }}{% endif %}</div>
+  {% if item.description != "" %}<p class="cv-item__description">{{ item.description }}</p>{% endif %}
+</div>
+{% endfor %}

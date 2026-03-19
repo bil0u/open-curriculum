@@ -1,0 +1,6 @@
+{% for item in section.items %}
+<div class="cv-reference">
+  {% if item.quote != "" %}<p class="cv-reference__quote">"{{ item.quote }}"</p>{% endif %}
+  <p class="cv-reference__author">{{ item.name }}{% if item.role != "" %}, {{ item.role }}{% endif %}{% if item.company != "" %} — {{ item.company }}{% endif %}</p>
+</div>
+{% endfor %}

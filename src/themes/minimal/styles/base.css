@@ -1,0 +1,350 @@
+.cv-page {
+  font-family: var(--cv-font-family);
+  font-size: var(--cv-font-size);
+  line-height: var(--cv-line-height);
+  color: var(--cv-text-color);
+  max-width: 100%;
+}
+
+/* ── Header ── */
+.cv-header {
+  text-align: center;
+  padding-block-end: var(--cv-spacing-md);
+  margin-block-end: var(--cv-spacing-lg);
+  border-block-end: 1px solid var(--cv-border-color);
+}
+
+.cv-header__name {
+  font-size: 2em;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-block-end: var(--cv-spacing-xs);
+}
+
+.cv-header__title {
+  font-size: 1.1em;
+  font-weight: normal;
+  font-style: italic;
+  color: var(--cv-accent-color);
+  margin-block-end: var(--cv-spacing-sm);
+}
+
+.cv-header__contact {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.2em 0;
+  font-size: 0.85em;
+  color: var(--cv-text-muted);
+}
+
+.cv-header__contact a {
+  color: var(--cv-text-muted);
+}
+
+.cv-header__contact-item::before {
+  content: " | ";
+}
+
+.cv-header__contact-item:first-child::before {
+  content: none;
+}
+
+/* ── Single-column body ── */
+.cv-body {
+  padding-block: 0;
+}
+
+/* ── Sections ── */
+.cv-section {
+  margin-block-end: var(--cv-spacing-lg);
+}
+
+.cv-section:last-child {
+  margin-block-end: 0;
+}
+
+.cv-section__title {
+  font-size: 1.05em;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--cv-text-color);
+  padding-block-end: var(--cv-spacing-xs);
+  border-block-end: 1px solid var(--cv-accent-color);
+  margin-block-end: var(--cv-spacing-sm);
+}
+
+/* ── Introduction ── */
+.cv-introduction {
+  font-size: 0.95em;
+  color: var(--cv-text-muted);
+}
+
+/* ── Timeline items (experience / education) ── */
+.cv-item {
+  margin-block-end: var(--cv-spacing-md);
+}
+
+.cv-item:last-child {
+  margin-block-end: 0;
+}
+
+.cv-item--timeline {
+  display: flex;
+  gap: var(--cv-spacing-md);
+}
+
+.cv-item__date {
+  flex-shrink: 0;
+  width: 9em;
+  font-size: 0.82em;
+  color: var(--cv-text-muted);
+  padding-block-start: 0.15em;
+}
+
+.cv-item__content {
+  flex: 1;
+  border-inline-start: 3px solid var(--cv-accent-color);
+  padding-inline-start: var(--cv-spacing-sm);
+}
+
+.cv-item__role,
+.cv-item__degree {
+  font-weight: 700;
+  font-size: 0.95em;
+}
+
+.cv-item__org {
+  font-size: 0.88em;
+  color: var(--cv-text-muted);
+  margin-block-start: 0.1em;
+}
+
+.cv-item__description {
+  font-size: 0.9em;
+  margin-block-start: var(--cv-spacing-xs);
+}
+
+.cv-item__highlights {
+  margin-block-start: var(--cv-spacing-xs);
+  padding-inline-start: 1.2em;
+  list-style: disc;
+  font-size: 0.88em;
+}
+
+.cv-item__highlights li {
+  margin-block-end: 0.1em;
+}
+
+/* ── Skills (comma-separated, no pills) ── */
+.cv-skills-category {
+  margin-block-end: var(--cv-spacing-sm);
+  font-size: 0.92em;
+}
+
+.cv-skills-category:last-child {
+  margin-block-end: 0;
+}
+
+.cv-skills-category__name {
+  font-weight: 700;
+}
+
+.cv-skills-category__list {
+  color: var(--cv-text-muted);
+}
+
+/* ── Languages ── */
+.cv-language-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.92em;
+  padding-block: 0.1em;
+}
+
+.cv-language-item__name {
+  font-weight: 600;
+}
+
+.cv-language-item__level {
+  font-size: 0.88em;
+  color: var(--cv-text-muted);
+}
+
+/* ── Projects ── */
+.cv-project {
+  margin-block-end: var(--cv-spacing-sm);
+  padding: var(--cv-spacing-sm) var(--cv-spacing-md);
+  border: 1px solid var(--cv-border-color);
+  border-inline-start: 3px solid var(--cv-accent-color);
+}
+
+.cv-project:last-child {
+  margin-block-end: 0;
+}
+
+.cv-project__name {
+  font-weight: 700;
+  font-size: 0.95em;
+}
+
+.cv-project__name a {
+  color: var(--cv-accent-color);
+}
+
+.cv-project__description {
+  font-size: 0.9em;
+  margin-block-start: 0.15em;
+  color: var(--cv-text-muted);
+}
+
+.cv-project__tags {
+  margin-block-start: 0.25em;
+  font-size: 0.82em;
+  color: var(--cv-text-muted);
+}
+
+/* ── Certifications ── */
+.cv-cert-item {
+  margin-block-end: var(--cv-spacing-sm);
+  font-size: 0.92em;
+}
+
+.cv-cert-item:last-child {
+  margin-block-end: 0;
+}
+
+.cv-cert-item__name {
+  font-weight: 600;
+}
+
+.cv-cert-item__name a {
+  color: var(--cv-accent-color);
+}
+
+.cv-cert-item__issuer {
+  font-size: 0.88em;
+  color: var(--cv-text-muted);
+}
+
+/* ── Awards ── */
+.cv-award-item {
+  margin-block-end: var(--cv-spacing-sm);
+  font-size: 0.92em;
+}
+
+.cv-award-item:last-child {
+  margin-block-end: 0;
+}
+
+.cv-award-item__title {
+  font-weight: 600;
+}
+
+.cv-award-item__awarder {
+  font-size: 0.88em;
+  color: var(--cv-text-muted);
+}
+
+/* ── Publications ── */
+.cv-pub-item {
+  margin-block-end: var(--cv-spacing-sm);
+  font-size: 0.92em;
+}
+
+.cv-pub-item:last-child {
+  margin-block-end: 0;
+}
+
+.cv-pub-item__title {
+  font-weight: 600;
+}
+
+.cv-pub-item__title a {
+  color: var(--cv-accent-color);
+}
+
+.cv-pub-item__publisher {
+  font-size: 0.88em;
+  color: var(--cv-text-muted);
+}
+
+.cv-pub-item__coauthors {
+  font-size: 0.85em;
+  color: var(--cv-text-muted);
+  font-style: italic;
+}
+
+/* ── References ── */
+.cv-reference {
+  margin-block-end: var(--cv-spacing-md);
+  padding-inline-start: var(--cv-spacing-md);
+  border-inline-start: 3px solid var(--cv-border-color);
+}
+
+.cv-reference:last-child {
+  margin-block-end: 0;
+}
+
+.cv-reference__quote {
+  font-style: italic;
+  font-size: 0.92em;
+  color: var(--cv-text-muted);
+  margin-block-end: 0.25em;
+}
+
+.cv-reference__author {
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+/* ── Interests ── */
+.cv-interests-category {
+  margin-block-end: var(--cv-spacing-sm);
+  font-size: 0.92em;
+}
+
+.cv-interests-category:last-child {
+  margin-block-end: 0;
+}
+
+.cv-interests-category__name {
+  font-weight: 700;
+  display: inline;
+}
+
+.cv-interests-category__name::after {
+  content: ": ";
+  font-weight: normal;
+}
+
+.cv-interests-category__items {
+  display: inline;
+  color: var(--cv-text-muted);
+}
+
+/* ── Freeform ── */
+.cv-freeform {
+  font-size: 0.92em;
+}
+
+/* ── Print ── */
+@media print {
+  .cv-page {
+    break-inside: avoid;
+  }
+
+  .cv-item__content {
+    border-inline-start-color: var(--cv-accent-color) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .cv-project {
+    border-inline-start-color: var(--cv-accent-color) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
