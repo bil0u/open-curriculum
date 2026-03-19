@@ -13,7 +13,12 @@ import type {
 } from "@/lib/types";
 import { generateId, generateISODateTime, isOk } from "@/lib/utils";
 
-import { arrayMove, updateDocSection, updateDocSectionItem } from "./helpers";
+import {
+  arrayMove,
+  regenerateIds,
+  updateDocSection,
+  updateDocSectionItem,
+} from "./helpers";
 
 export interface CvState {
   activeCvId: EntityId | null;
@@ -31,6 +36,7 @@ export interface CreateCvOptions {
 export interface CvActions {
   loadCv: (id: EntityId) => Promise<void>;
   createCv: (options: CreateCvOptions) => Promise<EntityId>;
+  duplicateCv: (id: EntityId, nameSuffix: string) => Promise<EntityId>;
   deleteCv: (id: EntityId) => Promise<void>;
   updateDocument: (updates: Partial<CvDocument>) => void;
   updateProfileOverride: (field: string, value: unknown) => void;
@@ -158,6 +164,25 @@ export const useCvStore = create<CvState & CvActions>()(
             activeLocale: newCv.defaultLocale,
           });
           return newCv.id;
+        },
+
+        duplicateCv: async (id, nameSuffix) => {
+          const source = await db.cvs.get(id);
+          if (!source) throw new Error(`CV not found: ${id}`);
+
+          const duplicated = regenerateIds({
+            ...source,
+            name: `${source.name} ${nameSuffix}`,
+          });
+
+          await db.cvs.put(duplicated);
+          useCvStore.temporal.getState().clear();
+          set({
+            activeCvId: duplicated.id,
+            document: duplicated,
+            activeLocale: duplicated.defaultLocale,
+          });
+          return duplicated.id;
         },
 
         deleteCv: async (id) => {

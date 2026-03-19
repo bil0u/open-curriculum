@@ -1,4 +1,5 @@
 import type { CvDocument, EntityId, Section } from "@/lib/types";
+import { generateId, generateISODateTime } from "@/lib/utils";
 
 /**
  * Reorder an array element from one index to another.
@@ -47,4 +48,47 @@ export function updateDocSectionItem(
       ),
     } as Section;
   });
+}
+
+/**
+ * Deep-clones a CvDocument with fresh IDs for the CV, all sections, items, and categories.
+ * Uses structuredClone + structural patching to avoid fighting TS discriminated unions.
+ */
+export function regenerateIds(cv: CvDocument): CvDocument {
+  const now = generateISODateTime();
+  const clonedSections = structuredClone(cv.sections);
+
+  for (const section of clonedSections) {
+    section.id = generateId();
+
+    const s = section as unknown as Record<string, unknown>;
+
+    if (Array.isArray(s.items)) {
+      for (const item of s.items as Array<{ id: EntityId }>) {
+        item.id = generateId();
+      }
+    }
+
+    if (Array.isArray(s.categories)) {
+      for (const cat of s.categories as Array<{
+        id: EntityId;
+        skills?: Array<{ id: EntityId }>;
+      }>) {
+        cat.id = generateId();
+        if (Array.isArray(cat.skills)) {
+          for (const skill of cat.skills) {
+            skill.id = generateId();
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    ...cv,
+    id: generateId(),
+    sections: clonedSections,
+    createdAt: now,
+    updatedAt: now,
+  };
 }

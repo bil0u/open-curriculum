@@ -14,6 +14,7 @@ interface PreviewRenderState {
   isRendering: boolean;
   error: string | null;
   theme: ThemeDefinition | null;
+  profile: Profile | null;
 }
 
 /**
@@ -28,6 +29,7 @@ export function usePreviewRender(): PreviewRenderState {
   const [isRendering, setIsRendering] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeDefinition | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   const renderIdRef = useRef(0);
 
@@ -36,6 +38,7 @@ export function usePreviewRender(): PreviewRenderState {
       setRenderResult(null);
       setError(null);
       setTheme(null);
+      setProfile(null);
       return;
     }
 
@@ -59,6 +62,7 @@ export function usePreviewRender(): PreviewRenderState {
       }
 
       setTheme(resolvedTheme);
+      setProfile(profile);
 
       const result = await renderCv(
         document,
@@ -99,5 +103,5 @@ export function usePreviewRender(): PreviewRenderState {
     };
   }, [doRender]);
 
-  return { renderResult, isRendering, error, theme };
+  return { renderResult, isRendering, error, theme, profile };
 }

@@ -13,7 +13,8 @@
   "item": {
     "updated": "Modifié le {{date}}",
     "edit": "Renommer",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "duplicate": "Dupliquer"
   },
   "rename": {
     "label": "Nom du CV"
@@ -22,5 +23,9 @@
     "title": "Supprimer le CV",
     "message": "Êtes-vous sûr de vouloir supprimer « {{name}} » ? Cette action est irréversible.",
     "confirm": "Supprimer le CV"
+  },
+  "duplicate": {
+    "success": "CV dupliqué avec succès",
+    "name_suffix": "(copie)"
   }
 }

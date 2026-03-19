@@ -1,9 +1,20 @@
 {
   "title": "Exporter le CV",
   "export_pdf": "Exporter en PDF",
+  "export_pdf_description": "Imprimer ou enregistrer en PDF via la boîte de dialogue d'impression",
   "export_html": "Exporter en HTML",
+  "export_html_description": "Télécharger un fichier HTML autonome avec les styles intégrés",
   "export_json": "Exporter en JSON",
+  "export_json_description": "Télécharger les données complètes du CV au format natif pour sauvegarde ou transfert",
   "downloading": "Préparation du téléchargement…",
   "success": "Export réussi",
-  "error": "L'export a échoué. Veuillez réessayer."
+  "error": "L'export a échoué. Veuillez réessayer.",
+  "import_title": "Importer un CV",
+  "import_button": "Importer un CV",
+  "import_description": "Importer un CV depuis un fichier JSON natif",
+  "import_success": "CV importé avec succès",
+  "import_error": "L'import a échoué : {{error}}",
+  "import_invalid_format": "Format de fichier invalide. Un export JSON CV Genius est attendu.",
+  "import_invalid_version": "Version de fichier non supportée : {{version}}",
+  "import_invalid_data": "Le fichier contient des données de CV invalides : {{error}}"
 }

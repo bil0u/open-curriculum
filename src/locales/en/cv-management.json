@@ -13,7 +13,8 @@
   "item": {
     "updated": "Updated {{date}}",
     "edit": "Rename",
-    "delete": "Delete"
+    "delete": "Delete",
+    "duplicate": "Duplicate"
   },
   "rename": {
     "label": "CV name"
@@ -22,5 +23,9 @@
     "title": "Delete CV",
     "message": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
     "confirm": "Delete CV"
+  },
+  "duplicate": {
+    "success": "CV duplicated successfully",
+    "name_suffix": "(copy)"
   }
 }

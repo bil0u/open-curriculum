@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { type MutableRefObject, useCallback, useEffect, useRef } from "react";
 
 import type { RenderResult } from "@/lib/template-engine";
 
@@ -13,14 +13,24 @@ const PAGE_DIMENSIONS = {
 interface PreviewPaneProps {
   renderResult: RenderResult | null;
   pageFormat?: string;
+  iframeRefOut?: MutableRefObject<HTMLIFrameElement | null>;
 }
 
 export function PreviewPane({
   renderResult,
   pageFormat = "A4",
+  iframeRefOut,
 }: PreviewPaneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { iframeRef, render } = useIframeRenderer();
+
+  const iframeCallbackRef = useCallback(
+    (node: HTMLIFrameElement | null) => {
+      iframeRef.current = node;
+      if (iframeRefOut) iframeRefOut.current = node;
+    },
+    [iframeRef, iframeRefOut],
+  );
 
   const dims =
     PAGE_DIMENSIONS[pageFormat as keyof typeof PAGE_DIMENSIONS] ??
@@ -61,7 +71,7 @@ export function PreviewPane({
         }}
       >
         <iframe
-          ref={iframeRef}
+          ref={iframeCallbackRef}
           title="CV Preview"
           sandbox="allow-same-origin"
           style={{

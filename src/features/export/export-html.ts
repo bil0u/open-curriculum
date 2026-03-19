@@ -1,5 +1,7 @@
 import type { RenderResult } from "@/lib/template-engine";
 
+import { triggerDownload } from "./utils";
+
 /**
  * Serializes the rendered CV into a standalone HTML file with inlined CSS.
  * The output is a self-contained document that can be opened in any browser.
@@ -31,15 +33,7 @@ export function downloadHtml(
   fileName?: string,
 ): void {
   const html = exportHtml(result, profileName);
-  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = fileName ?? `${profileName}-cv.html`;
-  link.click();
-
-  URL.revokeObjectURL(url);
+  triggerDownload(html, "text/html;charset=utf-8", fileName ?? `${profileName}-cv.html`);
 }
 
 function escapeHtml(str: string): string {

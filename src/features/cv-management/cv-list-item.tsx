@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { useTranslation } from "@/lib/i18n";
 import { useCvStore } from "@/lib/store";
 import type { CvDocument } from "@/lib/types";
-import { IconButton, PencilIcon, TrashIcon } from "@/lib/ui";
+import { CopyIcon, IconButton, PencilIcon, TrashIcon } from "@/lib/ui";
 import { generateISODateTime } from "@/lib/utils";
 
 import { DeleteCvDialog } from "./delete-cv-dialog";
@@ -27,6 +27,7 @@ function formatDate(iso: string): string {
 export function CvListItem({ cv, isActive }: CvListItemProps) {
   const { t } = useTranslation("cv-management");
   const loadCv = useCvStore((s) => s.loadCv);
+  const duplicateCv = useCvStore((s) => s.duplicateCv);
   const updateDocument = useCvStore((s) => s.updateDocument);
 
   const [showDelete, setShowDelete] = useState(false);
@@ -110,6 +111,16 @@ export function CvListItem({ cv, isActive }: CvListItemProps) {
             onPress={() => setEditing(true)}
           >
             <PencilIcon />
+          </IconButton>
+          <IconButton
+            aria-label={t("item.duplicate")}
+            variant="ghost"
+            size="sm"
+            onPress={() =>
+              void duplicateCv(cv.id, t("duplicate.name_suffix"))
+            }
+          >
+            <CopyIcon />
           </IconButton>
           <IconButton
             aria-label={t("item.delete")}

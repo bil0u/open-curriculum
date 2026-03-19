@@ -35,6 +35,8 @@ export {
   EyeOffIcon,
   PlusIcon,
   PencilIcon,
+  CopyIcon,
+  UploadIcon,
   UndoIcon,
   RedoIcon,
 } from "./icons";
