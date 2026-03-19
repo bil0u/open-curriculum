@@ -7,6 +7,9 @@ beforeEach(() => {
     activePanel: "editor",
     isExportDialogOpen: false,
     isSettingsDialogOpen: false,
+    isShortcutCheatsheetOpen: false,
+    isOnboardingOpen: false,
+    isCreateCvDialogOpen: false,
   });
 });
 
@@ -108,5 +111,44 @@ describe("toggleSettingsDialog", () => {
   it("does not affect the export dialog state", () => {
     useUiStore.getState().toggleSettingsDialog();
     expect(useUiStore.getState().isExportDialogOpen).toBe(false);
+  });
+});
+
+describe("setShortcutCheatsheetOpen", () => {
+  it("opens the cheatsheet", () => {
+    useUiStore.getState().setShortcutCheatsheetOpen(true);
+    expect(useUiStore.getState().isShortcutCheatsheetOpen).toBe(true);
+  });
+
+  it("closes the cheatsheet", () => {
+    useUiStore.getState().setShortcutCheatsheetOpen(true);
+    useUiStore.getState().setShortcutCheatsheetOpen(false);
+    expect(useUiStore.getState().isShortcutCheatsheetOpen).toBe(false);
+  });
+});
+
+describe("setOnboardingOpen", () => {
+  it("opens the onboarding wizard", () => {
+    useUiStore.getState().setOnboardingOpen(true);
+    expect(useUiStore.getState().isOnboardingOpen).toBe(true);
+  });
+
+  it("closes the onboarding wizard", () => {
+    useUiStore.getState().setOnboardingOpen(true);
+    useUiStore.getState().setOnboardingOpen(false);
+    expect(useUiStore.getState().isOnboardingOpen).toBe(false);
+  });
+});
+
+describe("setCreateCvDialogOpen", () => {
+  it("opens the create CV dialog", () => {
+    useUiStore.getState().setCreateCvDialogOpen(true);
+    expect(useUiStore.getState().isCreateCvDialogOpen).toBe(true);
+  });
+
+  it("closes the create CV dialog", () => {
+    useUiStore.getState().setCreateCvDialogOpen(true);
+    useUiStore.getState().setCreateCvDialogOpen(false);
+    expect(useUiStore.getState().isCreateCvDialogOpen).toBe(false);
   });
 });

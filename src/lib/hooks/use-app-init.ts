@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { db } from "@/lib/db";
 import { requestPersistentStorage } from "@/lib/db/storage";
 import { i18n } from "@/lib/i18n";
-import { initAutoSave } from "@/lib/store";
+import { initAutoSave, useUiStore } from "@/lib/store";
 import { DEFAULT_SETTINGS } from "@/lib/types";
 
 export interface AppInitState {
@@ -41,6 +41,9 @@ export function useAppInit(): AppInitState {
         cleanupRef.current = initAutoSave(settings.autoSaveDelayMs);
 
         if (!cancelled) {
+          if (!settings.onboardingCompleted) {
+            useUiStore.getState().setOnboardingOpen(true);
+          }
           setIsReady(true);
         }
       } catch (err) {

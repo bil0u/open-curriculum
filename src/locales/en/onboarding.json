@@ -1,0 +1,37 @@
+{
+  "title": "Welcome to CV Genius",
+  "steps": {
+    "welcome": {
+      "heading": "Build professional CVs, right in your browser",
+      "description": "CV Genius is a free, offline-first CV builder. Your data stays on your device — nothing is sent to any server.",
+      "features": {
+        "themes": "Customizable themes with live preview",
+        "export": "Export to PDF, HTML, or JSON",
+        "versioning": "Auto-save with undo/redo and snapshots"
+      }
+    },
+    "create": {
+      "heading": "Create your first CV",
+      "description": "Give your CV a name to get started. You can always rename it later.",
+      "name_label": "CV name",
+      "name_placeholder": "e.g. Software Engineer CV",
+      "name_required": "Please enter a name for your CV"
+    },
+    "tips": {
+      "heading": "You're all set!",
+      "description": "Here are some tips to get you started:",
+      "tip_shortcuts": "Press {{shortcutKey}} anytime to see all keyboard shortcuts.",
+      "tip_theme": "Switch to the Theme panel to customize colors, fonts, and layout.",
+      "tip_export": "Use the export toolbar in the preview panel to download your CV.",
+      "tip_autosave": "Your work is auto-saved. Press {{saveKey}} to create a named snapshot."
+    }
+  },
+  "actions": {
+    "next": "Next",
+    "back": "Back",
+    "get_started": "Get started",
+    "skip": "Skip",
+    "create_and_continue": "Create & continue"
+  },
+  "progress": "Step {{current}} of {{total}}"
+}

@@ -1,10 +1,8 @@
 import { useEffect } from "react";
 
-import { useCvStore } from "@/lib/store";
+import { useCvStore, useUiStore } from "@/lib/store";
 
-const isMac =
-  typeof navigator !== "undefined" &&
-  /Mac|iPhone|iPad|iPod/.test(navigator.userAgent);
+import { isMac } from "./shortcuts";
 
 export function useGlobalKeyboardShortcuts() {
   useEffect(() => {
@@ -33,6 +31,21 @@ export function useGlobalKeyboardShortcuts() {
       if (e.key === "s") {
         e.preventDefault();
         void useCvStore.getState().createSnapshot();
+        return;
+      }
+
+      if (e.key === "n") {
+        e.preventDefault();
+        useUiStore.getState().setCreateCvDialogOpen(true);
+        return;
+      }
+
+      // Cmd+? (which is Cmd+Shift+/ on most keyboards)
+      if (e.key === "?" || (e.key === "/" && e.shiftKey)) {
+        e.preventDefault();
+        const ui = useUiStore.getState();
+        ui.setShortcutCheatsheetOpen(!ui.isShortcutCheatsheetOpen);
+        return;
       }
     }
 

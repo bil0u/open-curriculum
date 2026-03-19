@@ -15,6 +15,7 @@ export interface AppSettings {
   shortcuts: ShortcutBinding[];
   maxSnapshots: number;
   autoSaveDelayMs: number;
+  onboardingCompleted: boolean;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -25,6 +26,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   shortcuts: [],
   maxSnapshots: 50,
   autoSaveDelayMs: 2000,
+  onboardingCompleted: false,
 };
 
 export interface StoredBlob {

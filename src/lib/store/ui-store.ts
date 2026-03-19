@@ -8,6 +8,9 @@ export interface UiState {
   activePanel: "editor" | "theme" | "versions";
   isExportDialogOpen: boolean;
   isSettingsDialogOpen: boolean;
+  isShortcutCheatsheetOpen: boolean;
+  isOnboardingOpen: boolean;
+  isCreateCvDialogOpen: boolean;
 }
 
 export interface UiActions {
@@ -16,6 +19,9 @@ export interface UiActions {
   setActivePanel: (panel: UiState["activePanel"]) => void;
   toggleExportDialog: () => void;
   toggleSettingsDialog: () => void;
+  setShortcutCheatsheetOpen: (open: boolean) => void;
+  setOnboardingOpen: (open: boolean) => void;
+  setCreateCvDialogOpen: (open: boolean) => void;
 }
 
 export const useUiStore = create<UiState & UiActions>()((set) => ({
@@ -24,6 +30,9 @@ export const useUiStore = create<UiState & UiActions>()((set) => ({
   activePanel: "editor",
   isExportDialogOpen: false,
   isSettingsDialogOpen: false,
+  isShortcutCheatsheetOpen: false,
+  isOnboardingOpen: false,
+  isCreateCvDialogOpen: false,
 
   selectSection: (id) => set({ selectedSectionId: id }),
   setPreviewZoom: (zoom) => set({ previewZoom: zoom }),
@@ -32,4 +41,7 @@ export const useUiStore = create<UiState & UiActions>()((set) => ({
     set((s) => ({ isExportDialogOpen: !s.isExportDialogOpen })),
   toggleSettingsDialog: () =>
     set((s) => ({ isSettingsDialogOpen: !s.isSettingsDialogOpen })),
+  setShortcutCheatsheetOpen: (open) => set({ isShortcutCheatsheetOpen: open }),
+  setOnboardingOpen: (open) => set({ isOnboardingOpen: open }),
+  setCreateCvDialogOpen: (open) => set({ isCreateCvDialogOpen: open }),
 }));

@@ -56,5 +56,17 @@
     "title": "Confirmer la suppression",
     "message": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer cet élément ?",
     "confirm_button": "Supprimer"
+  },
+  "shortcuts": {
+    "title": "Raccourcis clavier",
+    "categories": {
+      "general": "Général",
+      "editing": "Édition"
+    },
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "save_snapshot": "Enregistrer un instantané",
+    "new_cv": "Créer un nouveau CV",
+    "show_shortcuts": "Afficher les raccourcis"
   }
 }

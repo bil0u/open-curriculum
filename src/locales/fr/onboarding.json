@@ -1,0 +1,37 @@
+{
+  "title": "Bienvenue sur CV Genius",
+  "steps": {
+    "welcome": {
+      "heading": "Créez des CV professionnels, directement dans votre navigateur",
+      "description": "CV Genius est un créateur de CV gratuit et hors-ligne. Vos données restent sur votre appareil — rien n'est envoyé à un serveur.",
+      "features": {
+        "themes": "Thèmes personnalisables avec aperçu en direct",
+        "export": "Export en PDF, HTML ou JSON",
+        "versioning": "Sauvegarde automatique avec annulation et instantanés"
+      }
+    },
+    "create": {
+      "heading": "Créez votre premier CV",
+      "description": "Donnez un nom à votre CV pour commencer. Vous pourrez toujours le renommer plus tard.",
+      "name_label": "Nom du CV",
+      "name_placeholder": "ex. CV Ingénieur logiciel",
+      "name_required": "Veuillez entrer un nom pour votre CV"
+    },
+    "tips": {
+      "heading": "Vous êtes prêt !",
+      "description": "Voici quelques conseils pour bien démarrer :",
+      "tip_shortcuts": "Appuyez sur {{shortcutKey}} à tout moment pour voir tous les raccourcis clavier.",
+      "tip_theme": "Passez au panneau Thème pour personnaliser les couleurs, polices et la mise en page.",
+      "tip_export": "Utilisez la barre d'export dans le panneau d'aperçu pour télécharger votre CV.",
+      "tip_autosave": "Votre travail est sauvegardé automatiquement. Appuyez sur {{saveKey}} pour créer un instantané nommé."
+    }
+  },
+  "actions": {
+    "next": "Suivant",
+    "back": "Retour",
+    "get_started": "C'est parti",
+    "skip": "Passer",
+    "create_and_continue": "Créer et continuer"
+  },
+  "progress": "Étape {{current}} sur {{total}}"
+}

@@ -1,6 +1,8 @@
-import { CvList } from "@/features/cv-management";
+import { CreateCvDialog, CvList } from "@/features/cv-management";
 import { EditorPanel } from "@/features/editor";
+import { OnboardingWizard } from "@/features/onboarding";
 import { PreviewPanel } from "@/features/preview";
+import { ShortcutCheatsheet } from "@/features/settings";
 import { ThemeEditor } from "@/features/themes";
 import { VersionsPanel } from "@/features/versioning";
 import { useTranslation } from "@/lib/i18n";
@@ -72,6 +74,9 @@ function EmptyState() {
 export function AppShell() {
   const { t } = useTranslation("common");
   const document = useCvStore((s) => s.document);
+  const isCreateCvDialogOpen = useUiStore((s) => s.isCreateCvDialogOpen);
+  const setCreateCvDialogOpen = useUiStore((s) => s.setCreateCvDialogOpen);
+  const isOnboardingOpen = useUiStore((s) => s.isOnboardingOpen);
 
   useGlobalKeyboardShortcuts();
 
@@ -98,6 +103,12 @@ export function AppShell() {
           </>
         )}
       </main>
+      <CreateCvDialog
+        isOpen={isCreateCvDialogOpen}
+        onClose={() => setCreateCvDialogOpen(false)}
+      />
+      <ShortcutCheatsheet />
+      {isOnboardingOpen && <OnboardingWizard />}
     </div>
   );
 }

@@ -5,11 +5,10 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { importCvFromFile, triggerFileInput } from "@/features/export";
 import { db } from "@/lib/db";
 import { useTranslation } from "@/lib/i18n";
-import { useCvStore } from "@/lib/store";
+import { useCvStore, useUiStore } from "@/lib/store";
 import { PlusIcon, UploadIcon } from "@/lib/ui";
 import { isOk } from "@/lib/utils";
 
-import { CreateCvDialog } from "./create-cv-dialog";
 import { CvListItem } from "./cv-list-item";
 
 export function CvList() {
@@ -17,7 +16,7 @@ export function CvList() {
   const { t: tExport } = useTranslation("export");
   const activeCvId = useCvStore((s) => s.activeCvId);
   const loadCv = useCvStore((s) => s.loadCv);
-  const [showCreate, setShowCreate] = useState(false);
+  const setCreateCvDialogOpen = useUiStore((s) => s.setCreateCvDialogOpen);
   const [importError, setImportError] = useState<string | null>(null);
 
   const cvs = useLiveQuery(
@@ -56,7 +55,7 @@ export function CvList() {
           </button>
           <button
             type="button"
-            onClick={() => setShowCreate(true)}
+            onClick={() => setCreateCvDialogOpen(true)}
             className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           >
             <PlusIcon />
@@ -93,10 +92,6 @@ export function CvList() {
         )}
       </div>
 
-      <CreateCvDialog
-        isOpen={showCreate}
-        onClose={() => setShowCreate(false)}
-      />
     </div>
   );
 }

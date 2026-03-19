@@ -1,7 +1,8 @@
 import { type FormEvent, useState } from "react";
 
-import { useTranslation } from "@/lib/i18n";
+import { i18n, useTranslation } from "@/lib/i18n";
 import { useCvStore } from "@/lib/store";
+import { getDefaultThemeId } from "@/lib/theme-registry";
 import { Button, Dialog, TextField } from "@/lib/ui";
 
 interface CreateCvDialogProps {
@@ -23,7 +24,11 @@ export function CreateCvDialog({ isOpen, onClose }: CreateCvDialogProps) {
       setError(t("create.name_required"));
       return;
     }
-    await createCv({ name: trimmed, themeId: "classic", defaultLocale: "en" });
+    await createCv({
+      name: trimmed,
+      themeId: getDefaultThemeId(),
+      defaultLocale: i18n.language,
+    });
     setName("");
     setError(undefined);
     onClose();

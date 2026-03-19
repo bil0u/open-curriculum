@@ -1,1 +1,1 @@
-// Barrel export
+export { ShortcutCheatsheet } from "./shortcut-cheatsheet";
