@@ -481,7 +481,7 @@ const baseDoc = {
           startDate: "2024-01-01",
           description: {},
           highlights: [],
-          category: "work",
+          category: "work" as const,
         },
         {
           id: "i2",
@@ -489,7 +489,7 @@ const baseDoc = {
           startDate: "2024-06-01",
           description: {},
           highlights: [],
-          category: "work",
+          category: "work" as const,
         },
       ],
     },
@@ -790,7 +790,7 @@ describe("createSnapshot", () => {
     await useCvStore.getState().createSnapshot();
 
     expect(db.snapshots.put).toHaveBeenCalledOnce();
-    const snapshot = vi.mocked(db.snapshots.put).mock.calls[0]?.[0] as {
+    const snapshot = vi.mocked(db.snapshots.put).mock.calls[0]?.[0] as unknown as {
       cvId: string;
       state: typeof baseDoc;
       commandLog: unknown[];
