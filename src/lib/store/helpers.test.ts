@@ -1,6 +1,6 @@
 import type { CvDocument } from "@/lib/types";
 
-import { arrayMove, updateDocSection, updateDocSectionItem } from "./helpers";
+import { arrayMove, regenerateIds, updateDocSection, updateDocSectionItem } from "./helpers";
 
 const mockDoc: CvDocument = {
   id: "cv-1",
@@ -49,6 +49,147 @@ const mockDoc: CvDocument = {
   createdAt: "2024-01-01T00:00:00Z",
   updatedAt: "2024-01-01T00:00:00Z",
 };
+
+const mockDocWithSkills: CvDocument = {
+  id: "cv-skills",
+  name: "Skills CV",
+  profileId: null,
+  profileOverrides: {},
+  sections: [
+    {
+      id: "s-skills",
+      type: "skills",
+      title: {},
+      visible: true,
+      categories: [
+        {
+          id: "cat-1",
+          name: { en: "Languages" },
+          skills: [
+            { id: "sk-1", name: { en: "TypeScript" } },
+            { id: "sk-2", name: { en: "Python" } },
+          ],
+        },
+        {
+          id: "cat-2",
+          name: { en: "Tools" },
+          skills: [{ id: "sk-3", name: { en: "Git" } }],
+        },
+      ],
+    },
+    {
+      id: "s-intro",
+      type: "introduction",
+      title: {},
+      visible: true,
+      content: { en: "Hello" },
+    },
+  ],
+  themeId: "theme-1",
+  defaultLocale: "en",
+  availableLocales: ["en"],
+  pageFormat: "A4",
+  createdAt: "2024-01-01T00:00:00Z",
+  updatedAt: "2024-01-01T00:00:00Z",
+};
+
+describe("regenerateIds", () => {
+  it("returns a new document with a different top-level id", () => {
+    const result = regenerateIds(mockDoc);
+    expect(result.id).not.toBe(mockDoc.id);
+  });
+
+  it("does not mutate the original document", () => {
+    const original = structuredClone(mockDoc);
+    regenerateIds(mockDoc);
+    expect(mockDoc.id).toBe(original.id);
+    expect(mockDoc.sections[0]?.id).toBe(original.sections[0]?.id);
+  });
+
+  it("assigns fresh ids to all sections", () => {
+    const result = regenerateIds(mockDoc);
+    const originalIds = mockDoc.sections.map((s) => s.id);
+    const newIds = result.sections.map((s) => s.id);
+    newIds.forEach((id, i) => {
+      expect(id).not.toBe(originalIds[i]);
+    });
+  });
+
+  it("assigns fresh ids to items within sections", () => {
+    const result = regenerateIds(mockDoc);
+    const expSection = result.sections.find((s) => s.type === "experience");
+    const originalExpSection = mockDoc.sections.find((s) => s.type === "experience");
+    expect(expSection).toBeDefined();
+    expect(originalExpSection).toBeDefined();
+    if (!expSection || !("items" in expSection)) return;
+    if (!originalExpSection || !("items" in originalExpSection)) return;
+
+    expSection.items.forEach((item, i) => {
+      expect(item.id).not.toBe(originalExpSection.items[i]?.id);
+    });
+  });
+
+  it("assigns fresh ids to categories and nested skills", () => {
+    const result = regenerateIds(mockDocWithSkills);
+    const skillsSection = result.sections.find((s) => s.type === "skills");
+    const originalSkills = mockDocWithSkills.sections.find((s) => s.type === "skills");
+    expect(skillsSection).toBeDefined();
+    expect(originalSkills).toBeDefined();
+    if (!skillsSection || !("categories" in skillsSection)) return;
+    if (!originalSkills || !("categories" in originalSkills)) return;
+
+    skillsSection.categories.forEach((cat, ci) => {
+      expect(cat.id).not.toBe(originalSkills.categories[ci]?.id);
+      cat.skills.forEach((skill, si) => {
+        expect(skill.id).not.toBe(originalSkills.categories[ci]?.skills[si]?.id);
+      });
+    });
+  });
+
+  it("sets new createdAt and updatedAt timestamps", () => {
+    const result = regenerateIds(mockDoc);
+    expect(result.createdAt).not.toBe(mockDoc.createdAt);
+    expect(result.updatedAt).not.toBe(mockDoc.updatedAt);
+    expect(typeof result.createdAt).toBe("string");
+    expect(typeof result.updatedAt).toBe("string");
+  });
+
+  it("sets createdAt equal to updatedAt", () => {
+    const result = regenerateIds(mockDoc);
+    expect(result.createdAt).toBe(result.updatedAt);
+  });
+
+  it("preserves all section content other than ids", () => {
+    const result = regenerateIds(mockDoc);
+    const introSection = result.sections.find((s) => s.type === "introduction");
+    if (!introSection || !("content" in introSection)) throw new Error("No intro section");
+    expect(introSection.content).toEqual({ en: "Hello" });
+  });
+
+  it("preserves the number of sections", () => {
+    const result = regenerateIds(mockDoc);
+    expect(result.sections).toHaveLength(mockDoc.sections.length);
+  });
+
+  it("generates unique ids across all regenerated entities", () => {
+    const result = regenerateIds(mockDocWithSkills);
+    const allIds: string[] = [result.id];
+    for (const section of result.sections) {
+      allIds.push(section.id);
+      const s = section as unknown as Record<string, unknown>;
+      if (Array.isArray(s.categories)) {
+        for (const cat of s.categories as Array<{ id: string; skills?: Array<{ id: string }> }>) {
+          allIds.push(cat.id);
+          if (Array.isArray(cat.skills)) {
+            for (const skill of cat.skills) allIds.push(skill.id);
+          }
+        }
+      }
+    }
+    const uniqueIds = new Set(allIds);
+    expect(uniqueIds.size).toBe(allIds.length);
+  });
+});
 
 describe("arrayMove", () => {
   it("moves an element forward in the array", () => {
