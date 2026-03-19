@@ -6,6 +6,7 @@ import type { Section } from "@/lib/types";
 import {
   ChevronDownIcon,
   ConfirmDialog,
+  DragHandle,
   EyeIcon,
   EyeOffIcon,
   IconButton,
@@ -18,12 +19,14 @@ interface SectionCardProps {
   section: Section;
   isExpanded: boolean;
   onToggleExpand: () => void;
+  dragHandleRef?: (element: Element | null) => void;
 }
 
 export function SectionCard({
   section,
   isExpanded,
   onToggleExpand,
+  dragHandleRef,
 }: SectionCardProps) {
   const { t } = useTranslation("editor");
   const { t: tCommon } = useTranslation("common");
@@ -62,6 +65,7 @@ export function SectionCard({
     >
       {/* Header */}
       <div className="flex items-center gap-2 px-3 py-2">
+        <DragHandle ref={dragHandleRef} aria-label={t("drag.handle")} />
         <span className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full shrink-0">
           {t(`section_types.${section.type}`)}
         </span>
