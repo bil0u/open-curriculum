@@ -1,6 +1,7 @@
 import { CvList } from "@/features/cv-management";
 import { EditorPanel } from "@/features/editor";
 import { PreviewPanel } from "@/features/preview";
+import { ThemePicker } from "@/features/themes";
 import { useTranslation } from "@/lib/i18n";
 import { useCvStore, useUiStore } from "@/lib/store";
 
@@ -44,7 +45,8 @@ function Sidebar() {
         ))}
       </nav>
       <div className="flex-1 overflow-y-auto">
-        <CvList />
+        {activePanel === "editor" && <CvList />}
+        {activePanel === "theme" && <ThemePicker />}
       </div>
     </aside>
   );

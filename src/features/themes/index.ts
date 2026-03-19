@@ -1,1 +1,1 @@
-// Barrel export
+export { ThemePicker } from "./theme-picker";
