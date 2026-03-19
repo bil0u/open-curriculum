@@ -9,3 +9,14 @@ declare module "pagedjs" {
     ): Promise<unknown>;
   }
 }
+
+// Vite asset imports
+declare module "*.liquid?raw" {
+  const content: string;
+  export default content;
+}
+
+declare module "*.css?raw" {
+  const content: string;
+  export default content;
+}
