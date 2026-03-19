@@ -44,7 +44,7 @@ export function createLiquidEngine(theme: ThemeDefinition): Liquid {
       async exists(file: string): Promise<boolean> {
         return this.existsSync(file);
       },
-      resolve(_root: string, file: string, _ext: string): string {
+      resolve(_root: string, file: string): string {
         return file;
       },
     },

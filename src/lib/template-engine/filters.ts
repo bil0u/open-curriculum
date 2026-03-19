@@ -93,7 +93,7 @@ function extractInitials(value: unknown): string {
   return String(value ?? "")
     .split(/\s+/)
     .filter(Boolean)
-    .map((word) => word[0]!.toUpperCase())
+    .map((word) => word.charAt(0).toUpperCase())
     .join("");
 }
 

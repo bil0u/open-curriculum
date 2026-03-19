@@ -286,9 +286,11 @@ function buildSlots(
 
   const slots: Record<string, ResolvedSection[]> = {};
   sections.forEach((section, index) => {
+    const resolvedSection = resolved[index];
+    if (!resolvedSection) return;
     const slotName = mapping[section.id] ?? "main";
     if (!slots[slotName]) slots[slotName] = [];
-    slots[slotName].push(resolved[index]!);
+    slots[slotName].push(resolvedSection);
   });
   return slots;
 }

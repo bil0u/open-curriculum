@@ -237,7 +237,7 @@ describe("buildRenderContext", () => {
 
     expect(ctx.slots.main).toHaveLength(2);
     expect(ctx.slots.sidebar).toHaveLength(1);
-    expect(ctx.slots.sidebar![0]!.type).toBe("skills");
+    expect(ctx.slots.sidebar?.[0]?.type).toBe("skills");
   });
 
   it("resolves page dimensions for A4", () => {
@@ -301,6 +301,7 @@ describe("renderCv", () => {
 
   it("uses the _default partial for unknown section types", async () => {
     // The test theme has no 'introduction' partial but has _default
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { introduction: _, ...restTemplates } = mockTheme.templates;
     const themeWithoutIntro = {
       ...mockTheme,

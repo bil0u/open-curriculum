@@ -59,7 +59,6 @@ export function CreateCvDialog({ isOpen, onClose }: CreateCvDialogProps) {
           onChange={setName}
           errorMessage={error}
           isRequired
-          autoFocus
         />
         <div className="flex justify-end gap-2">
           <Button variant="secondary" onPress={handleClose}>
