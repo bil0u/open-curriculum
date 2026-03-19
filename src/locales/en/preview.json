@@ -1,7 +1,12 @@
 {
+  "panel_label": "Preview",
+  "rendering": "Rendering…",
+  "render_error": "Preview rendering failed",
+  "page_format": "Page format",
   "zoom_in": "Zoom in",
   "zoom_out": "Zoom out",
   "zoom_reset": "Reset zoom",
-  "page_format": "Page format",
-  "loading": "Rendering preview…"
+  "theme_picker": {
+    "title": "Theme"
+  }
 }

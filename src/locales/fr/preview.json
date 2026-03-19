@@ -1,7 +1,12 @@
 {
+  "panel_label": "Aperçu",
+  "rendering": "Rendu en cours…",
+  "render_error": "Échec du rendu de l'aperçu",
+  "page_format": "Format de page",
   "zoom_in": "Zoom avant",
   "zoom_out": "Zoom arrière",
   "zoom_reset": "Réinitialiser le zoom",
-  "page_format": "Format de page",
-  "loading": "Rendu de l'aperçu…"
+  "theme_picker": {
+    "title": "Thème"
+  }
 }
