@@ -1,6 +1,7 @@
 import { temporal } from "zundo";
 import { create, useStore } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
+import { useShallow } from "zustand/react/shallow";
 
 import { db } from "@/lib/db";
 import { validateCvDocument } from "@/lib/db/integrity";
@@ -458,10 +459,13 @@ export const useCvStore = create<CvState & CvActions>()(
 );
 
 export function useUndoRedo() {
-  return useStore(useCvStore.temporal, (state) => ({
-    undo: state.undo,
-    redo: state.redo,
-    canUndo: state.pastStates.length > 0,
-    canRedo: state.futureStates.length > 0,
-  }));
+  return useStore(
+    useCvStore.temporal,
+    useShallow((state) => ({
+      undo: state.undo,
+      redo: state.redo,
+      canUndo: state.pastStates.length > 0,
+      canRedo: state.futureStates.length > 0,
+    })),
+  );
 }
