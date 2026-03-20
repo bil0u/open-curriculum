@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 
 import {
   Accessibility,
@@ -90,11 +90,11 @@ interface SortableItemRowProps {
   sectionId: EntityId;
   locale: string;
   isExpanded: boolean;
-  onToggleExpand: () => void;
-  onRequestRemove: () => void;
+  onToggleExpand: (id: EntityId) => void;
+  onRequestRemove: (id: EntityId) => void;
 }
 
-function SortableItemRow({
+const SortableItemRow = memo(function SortableItemRow({
   item,
   index,
   sectionType,
@@ -110,6 +110,19 @@ function SortableItemRow({
     id: item.id,
     index,
   });
+  const handleToggle = useCallback(
+    () => onToggleExpand(item.id),
+    [onToggleExpand, item.id],
+  );
+  const handleRemove = useCallback(
+    () => onRequestRemove(item.id),
+    [onRequestRemove, item.id],
+  );
+  const handleChange = useCallback(
+    (updates: Record<string, unknown>) =>
+      updateSectionItem(sectionId, item.id, updates),
+    [updateSectionItem, sectionId, item.id],
+  );
 
   const summary = getItemSummary(sectionType, item, locale);
 
@@ -132,14 +145,14 @@ function SortableItemRow({
           aria-label={t("fields.remove_item")}
           variant="danger"
           size="sm"
-          onPress={onRequestRemove}
+          onPress={handleRemove}
         >
           <TrashIcon />
         </IconButton>
         <IconButton
           aria-label={isExpanded ? t("sections.collapse") : t("sections.expand")}
           size="sm"
-          onPress={onToggleExpand}
+          onPress={handleToggle}
         >
           <ChevronDownIcon rotated={isExpanded} />
         </IconButton>
@@ -149,15 +162,13 @@ function SortableItemRow({
           <ItemForm
             sectionType={sectionType}
             item={item}
-            onChange={(updates) =>
-              updateSectionItem(sectionId, item.id, updates)
-            }
+            onChange={handleChange}
           />
         </div>
       )}
     </div>
   );
-}
+});
 
 interface ItemListProps {
   section: Section;
@@ -174,10 +185,20 @@ export function ItemList({ section }: ItemListProps) {
   const [expandedItemId, setExpandedItemId] = useState<EntityId | null>(null);
   const [confirmRemoveId, setConfirmRemoveId] = useState<EntityId | null>(null);
 
-  if (!isItemSection(section)) return null;
+  const items = isItemSection(section)
+    ? (section.items as unknown as ItemRecord[])
+    : null;
+  const itemIds = useMemo(() => items?.map((item) => item.id) ?? [], [items]);
 
-  const items = section.items as unknown as ItemRecord[];
-  const itemIds = items.map((item) => item.id);
+  const handleToggleExpand = useCallback((id: EntityId) => {
+    setExpandedItemId((prev) => (prev === id ? null : id));
+  }, []);
+
+  const handleRequestRemove = useCallback((id: EntityId) => {
+    setConfirmRemoveId(id);
+  }, []);
+
+  if (!items) return null;
 
   return (
     <div className="flex flex-col gap-2">
@@ -220,10 +241,8 @@ export function ItemList({ section }: ItemListProps) {
               sectionId={section.id}
               locale={activeLocale}
               isExpanded={item.id === expandedItemId}
-              onToggleExpand={() =>
-                setExpandedItemId(item.id === expandedItemId ? null : item.id)
-              }
-              onRequestRemove={() => setConfirmRemoveId(item.id)}
+              onToggleExpand={handleToggleExpand}
+              onRequestRemove={handleRequestRemove}
             />
           ))}
         </div>

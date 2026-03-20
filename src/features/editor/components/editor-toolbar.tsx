@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 
+import { formatRelativeTime, useLastSaved } from "@/features/versioning";
 import { useTranslation } from "@/lib/i18n";
 import { useCvStore, useUndoRedo } from "@/lib/store";
 import { Button, IconButton, RedoIcon, UndoIcon } from "@/lib/ui";
-
-import { formatRelativeTime } from "../../versioning/format-relative-time";
-import { useLastSaved } from "../../versioning/use-last-saved";
 
 export function EditorToolbar() {
   const { t } = useTranslation("editor");

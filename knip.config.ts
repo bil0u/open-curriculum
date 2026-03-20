@@ -3,10 +3,7 @@ import type { KnipConfig } from "knip";
 const config: KnipConfig = {
   entry: ["src/main.tsx", "vite.config.ts", "e2e/**/*.ts"],
   project: ["src/**/*.{ts,tsx}", "e2e/**/*.ts"],
-  ignore: [
-    // Empty barrel stub — tracked for cleanup in B4
-    "src/lib/commands/index.ts",
-  ],
+  ignore: [],
   ignoreDependencies: [
     // CLI tools — used via bunx, not imported in code
     "madge",
