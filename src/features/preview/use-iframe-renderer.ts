@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 
-import { Previewer } from "pagedjs";
+import type { Previewer } from "pagedjs";
 
 import type { RenderResult } from "@/lib/template-engine";
 
@@ -48,6 +48,7 @@ export function useIframeRenderer() {
       await iframeDoc.fonts.ready;
 
       // Run Paged.js pagination — it replaces body content with paginated output
+      const { Previewer } = await import("pagedjs");
       const previewer = new Previewer();
       previewerRef.current = previewer;
 

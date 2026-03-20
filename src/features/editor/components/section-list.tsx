@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 
 import {
   Accessibility,
@@ -23,10 +23,10 @@ interface SortableSectionProps {
   section: Section;
   index: number;
   isExpanded: boolean;
-  onToggleExpand: () => void;
+  onToggleExpand: (id: EntityId) => void;
 }
 
-function SortableSection({
+const SortableSection = memo(function SortableSection({
   section,
   index,
   isExpanded,
@@ -36,6 +36,10 @@ function SortableSection({
     id: section.id,
     index,
   });
+  const handleToggle = useCallback(
+    () => onToggleExpand(section.id),
+    [onToggleExpand, section.id],
+  );
 
   return (
     <div
@@ -46,16 +50,16 @@ function SortableSection({
       <SectionCard
         section={section}
         isExpanded={isExpanded}
-        onToggleExpand={onToggleExpand}
+        onToggleExpand={handleToggle}
         dragHandleRef={handleRef}
       />
     </div>
   );
-}
+});
 
 export function SectionList() {
   const { t } = useTranslation("editor");
-  const document = useCvStore((s) => s.document);
+  const sections = useCvStore((s) => s.document?.sections ?? null);
   const reorderSections = useCvStore((s) => s.reorderSections);
   const addSection = useCvStore((s) => s.addSection);
 
@@ -64,19 +68,18 @@ export function SectionList() {
   );
   const [showTypePicker, setShowTypePicker] = useState(false);
 
-  if (!document) return null;
-
-  const handleToggleExpand = (id: EntityId) => {
+  const handleToggleExpand = useCallback((id: EntityId) => {
     setExpandedSectionId((prev) => (prev === id ? null : id));
-  };
+  }, []);
+
+  if (!sections) return null;
 
   const handleSelectType = (type: SectionType) => {
     const newId = addSection(type);
     if (newId) setExpandedSectionId(newId);
   };
 
-  const sections = document.sections;
-  const sectionIds = sections.map((s) => s.id);
+  const sectionIds = useMemo(() => sections.map((s) => s.id), [sections]);
 
   return (
     <div className="flex flex-col gap-2 p-4">
@@ -124,7 +127,7 @@ export function SectionList() {
               section={section}
               index={index}
               isExpanded={section.id === expandedSectionId}
-              onToggleExpand={() => handleToggleExpand(section.id)}
+              onToggleExpand={handleToggleExpand}
             />
           ))}
         </div>

@@ -1,19 +1,33 @@
+import { Suspense, lazy } from "react";
+
 import { CreateCvDialog, CvList } from "@/features/cv-management";
 import { EditorPanel } from "@/features/editor";
-import { OnboardingWizard } from "@/features/onboarding";
 import { PreviewPanel } from "@/features/preview";
 import { ShortcutCheatsheet } from "@/features/settings";
-import { ThemeEditor } from "@/features/themes";
-import { VersionsPanel } from "@/features/versioning";
 import { useTranslation } from "@/lib/i18n";
 import { useGlobalKeyboardShortcuts } from "@/lib/keyboard";
 import { useCvStore, useUiStore } from "@/lib/store";
 
-function Sidebar() {
+const OnboardingWizard = lazy(() =>
+  import("@/features/onboarding/onboarding-wizard").then((m) => ({
+    default: m.OnboardingWizard,
+  })),
+);
+const ThemeEditor = lazy(() =>
+  import("@/features/themes/theme-editor").then((m) => ({
+    default: m.ThemeEditor,
+  })),
+);
+const VersionsPanel = lazy(() =>
+  import("@/features/versioning/versions-panel").then((m) => ({
+    default: m.VersionsPanel,
+  })),
+);
+
+function Sidebar({ hasDocument }: { hasDocument: boolean }) {
   const { t } = useTranslation("common");
   const activePanel = useUiStore((s) => s.activePanel);
   const setActivePanel = useUiStore((s) => s.setActivePanel);
-  const document = useCvStore((s) => s.document);
 
   const tabs = [
     { id: "editor", label: t("nav.editor") },
@@ -51,8 +65,16 @@ function Sidebar() {
       </nav>
       <div className="flex-1 overflow-y-auto">
         {activePanel === "editor" && <CvList />}
-        {activePanel === "theme" && <ThemeEditor />}
-        {activePanel === "versions" && document !== null && <VersionsPanel />}
+        {activePanel === "theme" && (
+          <Suspense>
+            <ThemeEditor />
+          </Suspense>
+        )}
+        {activePanel === "versions" && hasDocument && (
+          <Suspense>
+            <VersionsPanel />
+          </Suspense>
+        )}
       </div>
     </aside>
   );
@@ -73,7 +95,7 @@ function EmptyState() {
 
 export function AppShell() {
   const { t } = useTranslation("common");
-  const document = useCvStore((s) => s.document);
+  const hasDocument = useCvStore((s) => s.document !== null);
   const isCreateCvDialogOpen = useUiStore((s) => s.isCreateCvDialogOpen);
   const setCreateCvDialogOpen = useUiStore((s) => s.setCreateCvDialogOpen);
   const isOnboardingOpen = useUiStore((s) => s.isOnboardingOpen);
@@ -82,9 +104,9 @@ export function AppShell() {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar />
+      <Sidebar hasDocument={hasDocument} />
       <main className="flex flex-1 overflow-hidden">
-        {document === null ? (
+        {!hasDocument ? (
           <EmptyState />
         ) : (
           <>
@@ -108,7 +130,11 @@ export function AppShell() {
         onClose={() => setCreateCvDialogOpen(false)}
       />
       <ShortcutCheatsheet />
-      {isOnboardingOpen && <OnboardingWizard />}
+      {isOnboardingOpen && (
+        <Suspense>
+          <OnboardingWizard />
+        </Suspense>
+      )}
     </div>
   );
 }

@@ -7,10 +7,10 @@ import { ThemeWarnings } from "./components/theme-warnings";
 import { useThemeWarnings } from "./hooks/use-theme-warnings";
 
 export function EditorPanel() {
-  const document = useCvStore((s) => s.document);
+  const hasDocument = useCvStore((s) => s.document !== null);
   const themeWarnings = useThemeWarnings();
 
-  if (!document) return null;
+  if (!hasDocument) return null;
 
   return (
     <div className="flex h-full w-full flex-col">

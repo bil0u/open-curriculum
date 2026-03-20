@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 
 import { useTranslation } from "@/lib/i18n";
 import { useCvStore } from "@/lib/store";
@@ -15,7 +15,7 @@ interface SnapshotItemProps {
   onRestore: (id: EntityId) => void;
 }
 
-function SnapshotItem({ snapshot, onRestore }: SnapshotItemProps) {
+const SnapshotItem = memo(function SnapshotItem({ snapshot, onRestore }: SnapshotItemProps) {
   const { t } = useTranslation("versioning");
   const { t: tCommon } = useTranslation("common");
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -52,7 +52,7 @@ function SnapshotItem({ snapshot, onRestore }: SnapshotItemProps) {
       />
     </div>
   );
-}
+});
 
 export function VersionsPanel() {
   const { t } = useTranslation("versioning");

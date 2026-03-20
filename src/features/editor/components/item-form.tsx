@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 
 import { useTranslation } from "@/lib/i18n";
 import type { SectionType, Translatable } from "@/lib/types";
@@ -100,7 +100,7 @@ interface ItemFormProps {
   onChange: (updates: Record<string, unknown>) => void;
 }
 
-export function ItemForm({ sectionType, item, onChange }: ItemFormProps) {
+export const ItemForm = memo(function ItemForm({ sectionType, item, onChange }: ItemFormProps) {
   const { t } = useTranslation("editor");
   const schemas = useMemo(() => buildSchemas(t), [t]);
   const fields = schemas[sectionType] ?? [];
@@ -148,4 +148,4 @@ export function ItemForm({ sectionType, item, onChange }: ItemFormProps) {
       })}
     </div>
   );
-}
+});

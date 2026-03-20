@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 
 import { useTranslation } from "@/lib/i18n";
 import { useCvStore } from "@/lib/store";
@@ -22,7 +22,7 @@ interface SectionCardProps {
   dragHandleRef?: (element: Element | null) => void;
 }
 
-export function SectionCard({
+export const SectionCard = memo(function SectionCard({
   section,
   isExpanded,
   onToggleExpand,
@@ -134,4 +134,4 @@ export function SectionCard({
       />
     </div>
   );
-}
+});

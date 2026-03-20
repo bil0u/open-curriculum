@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 import { DEFAULT_LOCALE, useTranslation } from "@/lib/i18n";
 import { useCvStore } from "@/lib/store";
 import type { Translatable } from "@/lib/types";
@@ -14,7 +16,7 @@ export interface TranslatableFieldProps {
   errorMessage?: string;
 }
 
-export function TranslatableField({
+export const TranslatableField = memo(function TranslatableField({
   value,
   onChange,
   label,
@@ -68,4 +70,4 @@ export function TranslatableField({
       )}
     </div>
   );
-}
+});
