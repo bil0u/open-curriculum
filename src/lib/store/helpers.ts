@@ -1,4 +1,5 @@
 import type { CvDocument, EntityId, Section } from "@/lib/types";
+import { isCategorySection, isItemSection } from "@/lib/types";
 import { generateId, generateISODateTime } from "@/lib/utils";
 
 /**
@@ -10,7 +11,7 @@ export function arrayMove<T>(
   toIndex: number,
 ): T[] {
   const result = [...arr];
-  const [moved] = result.splice(fromIndex, 1) as [T];
+  const moved = result.splice(fromIndex, 1)[0] as T;
   result.splice(toIndex, 0, moved);
   return result;
 }
@@ -40,11 +41,13 @@ export function updateDocSectionItem(
   updater: (item: Record<string, unknown>) => Record<string, unknown>,
 ): CvDocument {
   return updateDocSection(doc, sectionId, (section) => {
-    if (!("items" in section)) return section;
+    if (!isItemSection(section)) return section;
     return {
       ...section,
-      items: (section.items as Array<{ id: EntityId }>).map((item) =>
-        item.id === itemId ? updater(item as Record<string, unknown>) : item,
+      items: section.items.map((item) =>
+        item.id === itemId
+          ? (updater(item as unknown as Record<string, unknown>) as unknown as typeof item)
+          : item,
       ),
     } as Section;
   });
@@ -61,21 +64,16 @@ export function regenerateIds(cv: CvDocument): CvDocument {
   for (const section of clonedSections) {
     section.id = generateId();
 
-    const s = section as unknown as Record<string, unknown>;
-
-    if (Array.isArray(s.items)) {
-      for (const item of s.items as Array<{ id: EntityId }>) {
+    if (isItemSection(section)) {
+      for (const item of section.items) {
         item.id = generateId();
       }
     }
 
-    if (Array.isArray(s.categories)) {
-      for (const cat of s.categories as Array<{
-        id: EntityId;
-        skills?: Array<{ id: EntityId }>;
-      }>) {
+    if (isCategorySection(section)) {
+      for (const cat of section.categories) {
         cat.id = generateId();
-        if (Array.isArray(cat.skills)) {
+        if ("skills" in cat) {
           for (const skill of cat.skills) {
             skill.id = generateId();
           }

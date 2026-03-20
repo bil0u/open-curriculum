@@ -1,3 +1,4 @@
+import type { DragEndEvent } from "@dnd-kit/dom";
 import { move } from "@dnd-kit/helpers";
 
 /**
@@ -6,13 +7,13 @@ import { move } from "@dnd-kit/helpers";
  */
 export function resolveDragReorder(
   ids: string[],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  event: any,
+  event: Parameters<DragEndEvent>[0],
 ): { oldIndex: number; newIndex: number } | null {
   if (event.canceled) return null;
 
-  const sourceId = event.operation?.source?.id as string | undefined;
-  if (!sourceId) return null;
+  const rawId = event.operation?.source?.id;
+  if (!rawId) return null;
+  const sourceId = String(rawId);
 
   const oldIndex = ids.indexOf(sourceId);
   if (oldIndex === -1) return null;

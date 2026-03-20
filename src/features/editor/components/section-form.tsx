@@ -1,11 +1,6 @@
 import { useTranslation } from "@/lib/i18n";
 import { useCvStore } from "@/lib/store";
-import type {
-  InterestsSection,
-  Section,
-  SkillsSection,
-  Translatable,
-} from "@/lib/types";
+import type { Section } from "@/lib/types";
 
 import { CategoryList } from "./category-list";
 import { ItemList } from "./item-list";
@@ -23,7 +18,7 @@ export function SectionForm({ section }: SectionFormProps) {
     return (
       <TranslatableField
         label={t("fields.content")}
-        value={(section as { content: Translatable }).content}
+        value={section.content}
         onChange={(newValue) =>
           updateSection(section.id, { content: newValue } as Partial<Section>)
         }
@@ -40,7 +35,7 @@ export function SectionForm({ section }: SectionFormProps) {
 
   if (section.type === "skills" || section.type === "interests") {
     return (
-      <CategoryList section={section as SkillsSection | InterestsSection} />
+      <CategoryList section={section} />
     );
   }
 

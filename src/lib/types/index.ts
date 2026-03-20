@@ -38,7 +38,11 @@ export type {
   AwardsSection,
   FreeformSection,
   Section,
+  ItemSection,
+  SectionItem,
+  CategorySection,
 } from "./sections";
+export { isItemSection, isCategorySection } from "./sections";
 
 export type {
   ThemeIconLibrary,

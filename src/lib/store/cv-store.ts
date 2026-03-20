@@ -10,8 +10,10 @@ import type {
   EntityId,
   Locale,
   Section,
+  SectionItem,
   SectionType,
 } from "@/lib/types";
+import { isItemSection } from "@/lib/types";
 import { generateId, generateISODateTime, isOk } from "@/lib/utils";
 
 import {
@@ -342,7 +344,7 @@ export const useCvStore = create<CvState & CvActions>()(
           set({
             document: withTimestamp(
               updateDocSection(document, sectionId, (s) => {
-                if (!("items" in s)) return s;
+                if (!isItemSection(s)) return s;
                 return { ...s, items: [...s.items, item] } as Section;
               }),
               {},
@@ -356,12 +358,10 @@ export const useCvStore = create<CvState & CvActions>()(
           set({
             document: withTimestamp(
               updateDocSection(document, sectionId, (s) => {
-                if (!("items" in s)) return s;
+                if (!isItemSection(s)) return s;
                 return {
                   ...s,
-                  items: (s.items as Array<{ id: EntityId }>).filter(
-                    (i) => i.id !== itemId,
-                  ),
+                  items: s.items.filter((i) => i.id !== itemId),
                 } as Section;
               }),
               {},
@@ -389,14 +389,10 @@ export const useCvStore = create<CvState & CvActions>()(
           set({
             document: withTimestamp(
               updateDocSection(document, sectionId, (s) => {
-                if (!("items" in s)) return s;
+                if (!isItemSection(s)) return s;
                 return {
                   ...s,
-                  items: arrayMove(
-                    s.items as Array<{ id: EntityId }>,
-                    fromIndex,
-                    toIndex,
-                  ),
+                  items: arrayMove(s.items as SectionItem[], fromIndex, toIndex),
                 } as Section;
               }),
               {},

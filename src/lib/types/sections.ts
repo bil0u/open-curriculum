@@ -196,3 +196,38 @@ export type Section =
   | ReferencesSection
   | AwardsSection
   | FreeformSection;
+
+/** Union of all section types that have an `items` array. */
+export type ItemSection =
+  | ExperienceSection
+  | EducationSection
+  | LanguagesSection
+  | ProjectsSection
+  | CertificationsSection
+  | PublicationsSection
+  | ReferencesSection
+  | AwardsSection;
+
+/** Union of all item types across ItemSection variants. */
+export type SectionItem =
+  | ExperienceItem
+  | EducationItem
+  | LanguageItem
+  | ProjectItem
+  | CertificationItem
+  | PublicationItem
+  | ReferenceItem
+  | AwardItem;
+
+/** Union of section types that have a `categories` array. */
+export type CategorySection = SkillsSection | InterestsSection;
+
+/** Narrows a Section to ItemSection (has an `items` array). */
+export function isItemSection(section: Section): section is ItemSection {
+  return "items" in section;
+}
+
+/** Narrows a Section to CategorySection (has a `categories` array). */
+export function isCategorySection(section: Section): section is CategorySection {
+  return "categories" in section;
+}

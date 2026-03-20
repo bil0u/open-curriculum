@@ -11,6 +11,7 @@ import { useSortable } from "@dnd-kit/react/sortable";
 
 import { useTranslation } from "@/lib/i18n";
 import { useCvStore } from "@/lib/store";
+import { isItemSection } from "@/lib/types";
 import type { EntityId, Section, SectionType, Translatable } from "@/lib/types";
 import {
   Button,
@@ -173,9 +174,9 @@ export function ItemList({ section }: ItemListProps) {
   const [expandedItemId, setExpandedItemId] = useState<EntityId | null>(null);
   const [confirmRemoveId, setConfirmRemoveId] = useState<EntityId | null>(null);
 
-  if (!("items" in section)) return null;
+  if (!isItemSection(section)) return null;
 
-  const items = (section as unknown as { items: ItemRecord[] }).items;
+  const items = section.items as unknown as ItemRecord[];
   const itemIds = items.map((item) => item.id);
 
   return (

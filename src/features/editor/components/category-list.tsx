@@ -67,9 +67,9 @@ interface CategoryListProps {
 
 export function CategoryList({ section }: CategoryListProps) {
   if (section.type === "skills") {
-    return <SkillsCategoryList section={section as SkillsSection} />;
+    return <SkillsCategoryList section={section} />;
   }
-  return <InterestsCategoryList section={section as InterestsSection} />;
+  return <InterestsCategoryList section={section} />;
 }
 
 function SkillsCategoryList({ section }: { section: SkillsSection }) {
@@ -223,7 +223,7 @@ function SkillsCategoryList({ section }: { section: SkillsSection }) {
                             onPress={() => {
                               const newSkill: Skill = {
                                 id: generateId(),
-                                name: {} as Translatable,
+                                name: {},
                               };
                               updateCategories(
                                 categories.map((c) =>
@@ -253,7 +253,7 @@ function SkillsCategoryList({ section }: { section: SkillsSection }) {
         onPress={() => {
           const newCat: SkillCategory = {
             id: generateId(),
-            name: {} as Translatable,
+            name: {},
             skills: [],
           };
           updateCategories([...categories, newCat]);
@@ -439,7 +439,7 @@ function InterestsCategoryList({ section }: { section: InterestsSection }) {
                             variant="secondary"
                             size="sm"
                             onPress={() => {
-                              const newItem: Translatable = {} as Translatable;
+                              const newItem: Translatable = {};
                               updateCategories(
                                 categories.map((c) =>
                                   c.id === cat.id
@@ -468,7 +468,7 @@ function InterestsCategoryList({ section }: { section: InterestsSection }) {
         onPress={() => {
           const newCat: InterestCategory = {
             id: generateId(),
-            name: {} as Translatable,
+            name: {},
             items: [],
           };
           updateCategories([...categories, newCat]);
