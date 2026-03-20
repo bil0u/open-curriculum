@@ -8,7 +8,6 @@ const config: KnipConfig = {
     // CLI tools — used via bunx, not imported in code
     "madge",
     "type-coverage",
-    "rollup-plugin-visualizer",
     // Type-only packages — used implicitly by TypeScript
     "@types/dompurify",
     // Testing libraries — used via vitest globals, not direct imports

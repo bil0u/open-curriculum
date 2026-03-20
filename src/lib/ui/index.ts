@@ -10,8 +10,8 @@ export type { TextAreaProps } from "./text-area";
 export { Select } from "./select";
 export type { SelectProps, SelectItem } from "./select";
 
-export { Dialog, DialogTrigger } from "./dialog";
-export type { DialogProps, DialogTriggerProps } from "./dialog";
+export { Dialog } from "./dialog";
+export type { DialogProps } from "./dialog";
 
 export { ConfirmDialog } from "./confirm-dialog";
 export type { ConfirmDialogProps } from "./confirm-dialog";

@@ -1,5 +1,4 @@
 export { exportHtml, downloadHtml } from "./export-html";
-export { exportPdf } from "./export-pdf";
 export type { ExportFormat, ExportContext } from "./types";
 export {
   defaultExporters,

@@ -14,7 +14,7 @@ const OnboardingWizard = lazy(() =>
   })),
 );
 const ThemeEditor = lazy(() =>
-  import("@/features/themes/theme-editor").then((m) => ({
+  import("@/features/themes/components/theme-editor").then((m) => ({
     default: m.ThemeEditor,
   })),
 );

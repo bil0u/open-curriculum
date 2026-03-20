@@ -5,7 +5,7 @@ import { useCvStore } from "@/lib/store";
 import { BUNDLED_THEMES } from "@/lib/theme-registry";
 import { ConfirmDialog } from "@/lib/ui";
 
-import { hasSlotConflict } from "./slot-utils";
+import { hasSlotConflict } from "../utils/slot-utils";
 
 export function ThemePicker() {
   const { t } = useTranslation("themes");

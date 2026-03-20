@@ -5,7 +5,7 @@ import { useCvStore } from "@/lib/store";
 import type { ThemeDefinition } from "@/lib/types";
 import { ConfirmDialog } from "@/lib/ui";
 
-import { hasSlotConflict } from "./slot-utils";
+import { hasSlotConflict } from "../utils/slot-utils";
 
 interface LayoutPickerProps {
   theme: ThemeDefinition;

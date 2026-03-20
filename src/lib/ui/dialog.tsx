@@ -1,6 +1,5 @@
 import {
   Dialog as AriaDialog,
-  DialogTrigger as AriaDialogTrigger,
   Heading,
   Modal,
   ModalOverlay,
@@ -41,10 +40,3 @@ export function Dialog({ title, children, isOpen, onOpenChange }: DialogProps) {
   );
 }
 
-export interface DialogTriggerProps {
-  children: React.ReactNode;
-}
-
-export function DialogTrigger({ children }: DialogTriggerProps) {
-  return <AriaDialogTrigger>{children}</AriaDialogTrigger>;
-}
